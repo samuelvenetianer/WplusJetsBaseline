@@ -1,0 +1,37 @@
+! VjetsPythia8_RunParameters.cmnd.
+! This file contains commands to be read in for a Pythia8 run.
+! Lines not beginning with a letter or digit are comments.
+! Names are case-insensitive  -  but spellings-sensitive!
+!
+! For details on each of these options, look at the online manual: http://home.thep.lu.se/~torbjorn/pythia83html/
+
+
+
+! 1) Settings used in the main program.
+!    ----------------------------------
+
+!    a) Job control parameters:
+!       .......................
+
+Main:numberOfEvents = 10000            ! number of events to generate
+Main:timesAllowErrors = 500            ! how many aborts before run stops
+Random:setSeed = on                    ! off => Use default seed only once at the beginning; on => re-initialize on each Pythia::init call
+Random:seed = 781874711                ! used only if setSeed = on; use the time as a seed when set to 0
+
+
+
+! 2) Settings related to output in init(), next() and stat().
+!    --------------------------------------------------------
+
+Init:showChangedSettings = off          ! list changed settings
+Init:showAllSettings = off              ! list all settings
+Init:showChangedParticleData = off      ! list changed particle data
+Init:showAllParticleData = off          ! list all particle data
+
+Next:numberCount = 100                  ! print message every n events
+Next:numberShowInfo = 0                 ! print event information n times
+Next:numberShowProcess = 0              ! print process record n times
+Next:numberShowEvent = 0                ! print event record n times
+Next:numberShowLHA = 0                  ! print LHA information n times
+Stat:showPartonLevel = off              ! additional statistics on MPI
+

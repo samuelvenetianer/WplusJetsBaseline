@@ -1,0 +1,190 @@
+! VjetsPythia8.cmnd.
+! This file contains commands to be read in for a Pythia8 run.
+! Lines not beginning with a letter or digit are comments.
+! Names are case-insensitive  -  but spellings-sensitive!
+!
+! For details on each of these options, look at the online manual: http://home.thep.lu.se/~torbjorn/pythia83html/
+
+
+
+! 1) Systematic uncertainty variations
+!    ---------------------------------
+
+UncertaintyBands:doVariations = on                ! Switch on shower uncertainty estimates
+
+
+!      Here are some settings to assess PDF uncertainties in the shower
+!      ................................................................
+
+#UncertaintyBands:List = {
+#  scale_pdf_lo isr:pdf:minus=0.5,
+#  scale_pdf_hi isr:pdf:plus=2.0
+#}
+
+
+!      Here are some settings to assess renormalization scale variations and PDF uncertainties in the shower
+!      .....................................................................................................
+
+UncertaintyBands:List = {
+    scale_fsr_lo fsr:muRfac=0.5, 
+    scale_fsr_hi fsr:muRfac=2.0, 
+    scale_isr_lo isr:muRfac=0.5, 
+    scale_isr_hi isr:muRfac=2.0, 
+    scale_pdf_lo isr:pdf:minus=0.5, 
+    scale_pdf_hi isr:pdf:plus=2.0
+}
+
+
+#UncertaintyBands:List = { 
+#        alphaShi fsr:muRfac=0.5 isr:muRfac=0.5,
+#        alphaSlo fsr:muRfac=2.0 isr:muRfac=2.0, 
+#        hardHi fsr:cNS=2.0 isr:cNS=2.0, 
+#        hardLo fsr:cNS=-2.0 isr:cNS=-2.0 
+#    }
+
+
+
+! 2) Fixed EWK physics parameters
+!    ----------------------------
+
+6:m0 = 172.5                                      ! Top mass
+23:m0 = 91.1876                                   ! Z-boson mass
+23:mWidth = 2.4952                                ! Z-boson width
+24:m0 = 80.399                                    ! W-boson mass
+24:mWidth = 2.085                                 ! W-boson width
+StandardModel:sin2thetaW = 0.23113                ! Sin Theta_W
+StandardModel:sin2thetaWbar = 0.23146             ! Sin Theta_Wbar
+
+
+
+! 3) QCD effect modeling switches and parameters
+!    -------------------------------------------
+
+!    a) PDF and ME parameters:
+!       ......................
+
+#PDF:useLHAPDF = on
+PDF:pSet=LHAPDF6:NNPDF23_lo_as_0130_qed
+#PDF:LHAPDFset = cteq6ll.LHpdf
+#PDF:pSet = 13                                    ! PDF set for the proton:         monash = 13
+#SigmaProcess:alphaSvalue = 0.130                 ! alphaS(MZ) for matrix elements: monash = 0.130   4C = 0.135
+#MultiPartonInteractions:alphaSvalue = 0.130      ! alphaS(MZ) for MPI:             monash = 0.130   4C = 0.135
+#SigmaProcess:renormScale2 = 2                    ! Renorm. scale Q2 for 2->2 process: 1 = pT^2 + min(m_3^2, m_4^2); 2 = sqrt((pT^2 + m_3^2) * (pT^2 + m_4^2)); 3 = pT^2 + 0.5 * (m_3^2 + m_4^2)
+#SigmaProcess:renormMultFac = 1.                  ! factor multiplying the renormalization scale
+#SigmaProcess:factorScale2 = 1                    ! Factorization scale Q2 for 2->2 process: same definitions as for renormalization scale
+#SigmaProcess:factorMultFac = 1.                  ! factor multiplying the factorization scale
+
+
+!    b) Choice of Parton Shower and Shower Switches:
+!       ...........................................
+
+#PartonShowers:model = 1                          ! 1: Default Pythia shower. 2: Vincia. 3: DIRE
+#Vincia:tuneFile = vinciaDefault.cmnd
+
+
+
+!    c) Tunes:
+!       ......
+
+ParticleDecays:limitTau0 = on                     ! When on, only particles with tau0 < tau0Max are decayed (set long-lived particle stable), as was done in the tunes
+ParticleDecays:tau0Max = 10                       ! ... if c*tau0 > 10 mm
+
+Tune:ee = 7                                       ! 7: P. Skand Monash 2013 tune of hadronization and time-like shower on ee,ppbar, and pp data
+Tune:pp = 21                                      ! 14: Monash 2013 tune. 17: ATLAS AZ tune. 21, 23-32: ATLAS A14 tune for NNPDF2.3LO starting from Monash, and using jets and UE observables (+SYST).
+Tune:preferLHAPDF = 2                             ! Use LHAPDF 6 PDF
+#Tune:preferLHAPDF = off                          ! use internal PDFs when LHAPDF not linked
+
+
+!    d) Switch on/off the key QCD effects (default: all on):
+!       ---------------------------------- 
+
+#PartonLevel:MPI = off                            ! no multiparton interactions
+#PartonLevel:ISR = off                            ! no initial-state radiation
+#PartonLevel:FSR = off                            ! no final-state radiation
+#HadronLevel:Hadronize = off                      ! no hadronization
+#HadronLevel:Decay = off                          ! no decays
+
+
+!    e) Time shower (QCD FSR):
+!       ......................
+
+#TimeShower:alphaSvalue = 0.1365                  ! Effective alphaS(mZ) value: monash = 0.1365.
+#TimeShower:alphaSorder = 1                       ! Running order:              monash = 1
+#TimeShower:alphaSuseCMW = off                    ! Translation from MS to CMW: monash = off
+#TimeShower:pTmin = 0.50                          ! Cutoff for QCD radiation:   monash = 0.50
+#TimeShower:pTminChgQ = 0.50                      ! Cutoff for QED radiation:   monash = 0.50
+#TimeShower:phiPolAsym = on                       ! Asymmetric azimuth:         monash = on
+
+
+!    f) Space shower (QCD ISR interleaved with MPI):
+!       ............................................
+
+#SpaceShower:alphaSvalue = 0.1365                 ! Effective alphaS(mZ) value:                monash = 0.1365    AZ = 0.1237 pm 0.0002      4C = 0.137
+#SpaceShower:alphaSorder = 1                      ! Running order:                             monash = 1
+#SpaceShower:alphaSuseCMW = off                   ! Translation from MS to CMW:                monash = off
+#SpaceShower:samePTasMPI = off                    ! ISR cutoff type:                           monash = off
+#SpaceShower:pT0Ref = 2.0                         ! ISR pT0 cutoff:                            monash = 2.0       AZ = 0.59 pm 0.08          4C = 2.0
+#SpaceShower:ecmRef = 7000.0                      ! ISR pT0 reference ECM scale:               monash = 7000.0
+#SpaceShower:ecmPow = 0.0                         ! ISR pT0 scaling power:                     monash = 0.0
+#SpaceShower:rapidityOrder = on                   ! Approx coherence via y-ordering:           monash = on                                   4C = on
+#SpaceShower:phiPolAsym = on                      ! Azimuth asymmetries from gluon pol:        monash = on
+#SpaceShower:phiIntAsym = on                      ! Azimuth asymmetries from interference:     monash = on
+#TimeShower:dampenBeamRecoil = on                 ! Recoil dampening in final-initial dipoles: monash = on
+#BeamRemnants:primordialKTsoft = 0.9              ! Primordial kT for soft procs:              monash = 0.9
+#BeamRemnants:primordialKThard = 1.8              ! Primordial kT for hard procs:              monash = 1.8       AZ = 1.71 pm 0.03
+#BeamRemnants:halfScaleForKT = 1.5                ! Primordial kT soft/hard boundary:          monash = 1.5
+#BeamRemnants:halfMassForKT = 1.0                 ! Primordial kT soft/hard mass boundary:     monash = 1.0
+
+#SpaceShower:rapidityOrderMPI = on
+
+
+!    g) Hadronization:
+!       ..............
+
+!    String breaks: pT and z distributions
+#StringPT:sigma = 0.335                           ! Soft pT in string breaks (in GeV):     monash = 0.335
+#StringPT:enhancedFraction = 0.01                 ! Fraction of breakups with enhanced pT: monash = 0.01
+#StringPT:enhancedWidth = 2.0                     ! Enhancement factor:                    monash = 2.0
+#StringZ:aLund = 0.68                             ! Lund FF a (hard fragmentation supp):   monash = 0.68
+#StringZ:bLund = 0.98                             ! Lund FF b (soft fragmentation supp):   monash = 0.98
+#StringZ:aExtraSquark = 0.0                       ! Extra a when picking up an s quark:    monash = 0.0
+#StringZ:aExtraDiquark = 0.97                     ! Extra a when picking up a diquark:     monash = 0.97
+#StringZ:rFactC = 1.32                            ! Lund-Bowler c-quark parameter:         monash = 1.32
+#StringZ:rFactB = 0.855                           ! Lund-Bowler b-quark parameter:         monash = 0.855
+
+!    Flavour composition: mesons
+#StringFlav:ProbStoUD = 0.217                     ! Strangeness-to-UD ratio:               monash = 0.217
+#StringFlav:mesonUDvector = 0.5                   ! Light-flavour vector suppression:      monash = 0.5
+#StringFlav:mesonSvector = 0.55                   ! Strange vector suppression:            monash = 0.55
+#StringFlav:mesonCvector = 0.88                   ! Charm vector suppression:              monash = 0.88
+#StringFlav:mesonBvector = 2.2                    ! Bottom vector suppression:             monash = 2.2
+#StringFlav:etaSup = 0.60                         ! Suppression of eta mesons:             monash = 0.60
+#StringFlav:etaPrimeSup = 0.12                    ! Suppression of eta’ mesons:            monash = 0.12
+
+!    Flavour composition: baryons
+#StringFlav:probQQtoQ = 0.081                     ! Diquark rate (for baryon production):  monash = 0.081
+#StringFlav:probSQtoQQ = 0.915                    ! Strange-diquark suppression:           monash = 0.915
+#StringFlav:probQQ1toQQ0 = 0.0275                 ! Vector diquark suppression:            monash = 0.0275
+#StringFlav:decupletSup = 1.0                     ! Spin-3/2 baryon suppression:           monash = 1.0
+#StringFlav:suppressLeadingB = off                ! Optional leading-baryon suppression:   monash = off
+#StringFlav:popcornSpair = 0.9                    ! monash = 0.9
+#StringFlav:popcornSmeson = 0.5                   ! monash = 0.5
+
+
+!    h) Multi-Parton-Interaction (MPI), Colour-Reconnection (CR), and Diffractive parameters:
+!       .....................................................................................
+
+#MultipartonInteractions:pT0Ref = 2.28            ! MPI pT0 IR regularization scale:       monash = 2.28      4C = 2.085
+#MultipartonInteractions:ecmRef = 7000.0          ! MPI pT0 reference ECM scale:           monash = 7000.0
+#MultipartonInteractions:ecmPow = 0.215           ! MPI pT0 scaling power:                 monash = 0.215     4C = 0.19
+#MultipartonInteractions:bProfile = 3             ! Transverse matter overlap profile:     monash = 3         4C = 3
+#MultipartonInteractions:expPow = 1.85            ! Shape parameter:                       monash = 1.85      4C = 2.00
+#BeamRemnants:reconnectRange = 1.8                ! Colour Reconnections:                  monash = 1.8       4C = 1.50
+#SigmaTotal:zeroAXB = on                          !                                        monash = on        4C = on
+#SigmaDiffractive:dampen = on                     !                                        monash = on        4C = on
+#SigmaDiffractive:maxXB = 65.0                    !                                        monash = 65.0      4C = 65.0
+#SigmaDiffractive:maxAX = 65.0                    !                                        monash = 65.0      4C = 65.0
+#SigmaDiffractive:maxXX = 65.0                    !                                        monash = 65.0      4C = 65.0
+#Diffraction:largeMassSuppress = 4.0              ! High-mass diffraction suppress power:  monash = 4.0
+
+## MultipartonInteractions:a1 = 0.06
