@@ -1,6 +1,9 @@
 # WplusJetsBaseline
 Pythia baseline code developed by bjohns
 
+Generates events using Pythia simulator and implements the detector effects.
+Outputs a file with truth-level and reco-level data.
+
 These instructions are a quick reference for running. For more information about steering, see Ben's full instructions and explanation at: https://github.com/bjohns664297/WplusJetsBaseline
 
 1) Once logging into cluster, type the following 4 commands one after another in the terminal (or see RootCopyPasta.txt in WplusJetsAnalysis): 
@@ -33,6 +36,4 @@ In terminal, type: ./MyPythia8Simul MyPythia8Simul_Main.cmnd -outroot name_of_ro
 
 3) Once this runs, the txt output will be saved under "outfiles" and the root output will be saved under /WplusJetsAnalysis/pythia-outputs
 
-This isall for WplusJetsBaseline. To continue processing, move to WplusJetsAnalysis.
-
-
+This is all for WplusJetsBaseline. To continue processing, move to WplusJetsAnalysis.
