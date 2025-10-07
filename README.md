@@ -12,6 +12,7 @@ srun --pty -p largemem --time=0-12:00:00 bash
 
 OR
 
+#THIS CURRENTLY DOESN'T WORK
 srun --pty -c 4 --time=0-12:00:00 bash
 
 THEN 
