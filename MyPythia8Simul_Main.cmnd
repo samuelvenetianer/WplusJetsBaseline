@@ -12,7 +12,7 @@
 
 Beams:idA = 2212                        ! first beam, p = 2212, pbar = -2212
 Beams:idB = 2212                        ! second beam, p = 2212, pbar = -2212
-Beams:eCM = 13000.                      ! CM energy of collision
+Beams:eCM = 13000.                      ! CM energy of collision ! originally set to 13000
 
 
 
@@ -40,10 +40,10 @@ Beams:eCM = 13000.                      ! CM energy of collision
 !    Z0 production; should set mMin
 !    ..............................
 
-#WeakSingleBoson:ffbar2gmZ = on          ! q qbar -> gamma*/Z0 inclusive
-#WeakBosonAndParton:qqbar2gmZg = on     ! q qbar -> gamma*/Z0 + g
-#WeakBosonAndParton:qg2gmZq = on        ! q g -> gamma*/Z + q
-#WeakZ0:gmZmode = 0                     ! 0 = full gamma*/Z0 interference structue, 1 = pure gamma* contribution, 2 = pure Z0 contribution
+WeakSingleBoson:ffbar2gmZ = on          ! q qbar -> gamma*/Z0 inclusive
+WeakBosonAndParton:qqbar2gmZg = on     ! q qbar -> gamma*/Z0 + g
+WeakBosonAndParton:qg2gmZq = on        ! q g -> gamma*/Z + q
+WeakZ0:gmZmode = 0                     ! 0 = full gamma*/Z0 interference structue, 1 = pure gamma* contribution, 2 = pure Z0 contribution
 
 
 
@@ -73,8 +73,8 @@ WeakSingleBoson:ffbar2W = on            ! q qbar -> W
 24:onIfAny  = 11 12                     ! Switch on ev channel    ----> BSJ: 11/12 for e's, 13/14 for mu's!
 #24:onPosIfAny  = 11 12                 ! Switch on ev channel
 #24:onNegIfAny  = 1 2 3 4 5             ! Switch on ev channel
-#23:onMode = off
-#23:onIfAny = 13
+23:onMode = 1                           ! Switch on Z decays
+#23:onIfAny = 13 15                     ! Added 15 to allow for tau decay
 
 
 

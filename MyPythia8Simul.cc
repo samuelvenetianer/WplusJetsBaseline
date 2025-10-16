@@ -146,6 +146,18 @@ void MyAnalysis::init()
   tree->Branch("electron_born_E",&electron_born_E);
   tree->Branch("electron_born_charge",&electron_born_charge);
 
+  tree->Branch("tau_born_pt",&tau_born_pt);   // SHV - includes tau and antitau
+  tree->Branch("tau_born_eta",&tau_born_eta);
+  tree->Branch("tau_born_phi",&tau_born_phi);
+  tree->Branch("tau_born_E",&tau_born_E);
+  tree->Branch("tau_born_charge",&tau_born_charge);
+
+  tree->Branch("tau_born_pt",&tau_born_pt);   // SHV
+  tree->Branch("tau_born_eta",&tau_born_eta);
+  tree->Branch("tau_born_phi",&tau_born_phi);
+  tree->Branch("tau_born_E",&tau_born_E);
+  tree->Branch("tau_born_charge",&tau_born_charge);
+
   tree->Branch("boson_pt",&boson_pt);
   tree->Branch("boson_eta",&boson_eta);
   tree->Branch("boson_phi",&boson_phi);
@@ -255,6 +267,7 @@ void MyAnalysis::init()
   tree->Branch("nBpartonjet",&nBpartonjet);
   tree->Branch("nBoson",&nBoson);
   tree->Branch("nPromptPhoton",&nPromptPhotons);
+  tree->Branch("nTauBorn", &nTauBorn);              //SHV 10/15/25 - counts taus and antitaus together
   tree->Branch("Met",&Met);
   tree->Branch("Met_phi",&Met_phi);
 
@@ -318,6 +331,9 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     p_FSRPhoton_Coll = &FSRPhoton_Coll;
     p_DressPhoton_Coll = &DressPhoton_Coll;
     p_Neutrino_Coll = &Neutrino_Coll;
+    p_Tau_Coll = &Tau_Coll;                       //SHV 10/15/25
+    p_TauDecay_Coll = &TauDecay_Coll;             //SHV 10/15/25
+    p_AntiTauDecay_Coll = &AntiTauDecay_Coll;     //SHV 10/15/25
     p_TruthBareSmallRJets_Coll = &TruthBareSmallRJets_Coll;
     p_TruthDressSmallRJets_Coll = &TruthDressSmallRJets_Coll;
     p_TruthBornSmallRJets_Coll = &TruthBornSmallRJets_Coll;
@@ -379,6 +395,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
       {
         myUtils.Get_BarePromptLepton(event, vecbosindex, p_PromptLeptonBare_Coll, p_LeptonConversion_Coll, p_FSRPhoton_Coll, p_Neutrino_Coll);
         myUtils.Get_BornPromptLepton(event, vecbosindex, p_LeptonBorn_Coll);
+        myUtils.Get_Tau_Info(event, vecbosindex, p_Tau_Coll, p_TauDecay_Coll, p_AntiTauDecay_Coll); //define above and in .h
       }
 
     if (PromptLeptonBare_Coll.size()!=0) myUtils.Get_DressPromptLepton(PromptLeptonBare_Coll,FSRPhoton_Coll, p_LeptonDress_Coll, p_DressPhoton_Coll);
@@ -870,6 +887,31 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
           }
       }
 
+    // ADD FOR TAUS AND DECAY PRODUCTS
+
+    //Tau Born only, count taus and antitaus together
+    nTauBorn = 0;
+
+    std::cout<<"p_Tau_Coll size: "<<p_Tau_Coll->size()<<std::endl;
+
+    if (p_Tau_Coll->size() != 0)
+      {
+        std::cout<<"There are taus!"<<std::endl;
+        for (size_t i = 0; i < p_Tau_Coll->size(); i++)
+          {
+            if ((Tau_Coll[i]).Pdgid() == 15 || (Tau_Coll[i]).Pdgid() == -15) //tau is 15, antitau is -15
+              {
+                tau_born_pt.push_back((Tau_Coll[i]).Pt());
+                tau_born_eta.push_back((Tau_Coll[i]).Eta());
+                double i_phi = (Tau_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (Tau_Coll[i]).Phi() + 6.283185307;	      
+                tau_born_phi.push_back(i_phi);
+                tau_born_E.push_back((Tau_Coll[i]).E());
+                tau_born_charge.push_back((Tau_Coll[i]).Charge());
+                nTauBorn += 1;
+              }
+          }
+      }
     
     // Electrons and muons
     // ...................
@@ -943,6 +985,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     nMuonBorn = 0;
     if (p_LeptonBorn_Coll->size() != 0)
       {
+        //std::cout<<"There born leptons!"<<std::endl;
         for (size_t i = 0; i < p_LeptonBorn_Coll->size(); i++)
           {
             if ((LeptonBorn_Coll[i]).Pdgid() == 11 || (LeptonBorn_Coll[i]).Pdgid() == -11)
@@ -1115,6 +1158,12 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     electron_born_E.clear();
     electron_born_charge.clear();
 
+    tau_born_pt.clear();
+    tau_born_eta.clear();
+    tau_born_phi.clear();
+    tau_born_E.clear();
+    tau_born_charge.clear();
+
     bjet_bare_pt.clear();
     bjet_bare_eta.clear();
     bjet_bare_phi.clear();
@@ -1208,6 +1257,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     FSRPhoton_Coll.clear();
     DressPhoton_Coll.clear();
     Neutrino_Coll.clear();
+    Tau_Coll.clear();            //SHV 10/15/25
 
 
     TruthBareSmallRJets_Coll.clear();

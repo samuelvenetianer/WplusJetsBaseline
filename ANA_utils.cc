@@ -1221,6 +1221,7 @@ map<string, double> ANA_utils::CentralUpAndDownHemisphereQuantities(std::vector<
 //
 //         -Get_BottomHadrons: Fill a collection of TruthParticle with the B-hadrons from promt b-quarks.
 //
+//	       -Get_Tau_Info: Fill a collection of TruthParticle with born taus from W and Z decays.
 //
 //*************************************************************************************************************
 //*************************************************************************************************************
@@ -1341,6 +1342,7 @@ void ANA_utils::Get_VectorBosons(Pythia8::Event event, std::vector<TruthPart>* p
   
   for (int i = event.size() - 1; i > 0; i--) {
     if (event[i].idAbs() == 24 || event[i].idAbs() == 23) {
+      std::cout<<"ID of vector boson saved is: "<<event[i].idAbs()<<std::endl;
       if (event[i].iBotCopyId()==i) vecboson_index.push_back(i);
     }
   }
@@ -2006,8 +2008,140 @@ void ANA_utils::Get_BornPromptLepton(Pythia8::Event event, std::vector<int> vecb
 }
 // ============================================================================================================
 
+void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_index, std::vector<TruthPart>* p_Tau_Coll, std::vector<TruthPart>* p_TauDecay_Coll, std::vector<TruthPart>* p_AntiTauDecay_Coll) {
 
+//MODEL AFTER THIS, CHANGE IDs TO BE TAUS, SAVE TAU INFO
+//UPDATE COMMENTS
+//
+// Find all taus at Born level coming from the decay of a W or a Z. Fill a true particle objects collection
+// with the information about these taus. This function is valid for events
+// with single or multiple vector bosons (e.g. diboson, ttbar, etc.). The FSR photons are already stored from
+// the function Get_BarePromptLepton.
+//
+// ============================================================================================================
 
+  // Find the taus from the vector boson decays
+  // --------------------------------------------------
+
+  std::vector<int> tau_index;
+  std::vector<int> tau_children_index; //storing children info separately for tau and antitau
+  std::vector<int> antitau_children_index; //storing children info separately for tau and antitau
+
+  // Loop over all vector bosons found in the event
+  // ..............................................
+  // Note: This require using the function Get_VectorBosons, and passing the index of each vector boson as
+  //       input to this function
+
+  std::cout<<"vecboson_index size: "<<vecboson_index.size()<<std::endl;
+
+  for (int i=0; i< vecboson_index.size(); i++) //loop over all vector bosons found in the event (stored in vecboson_index)
+    {
+      int idxVb = vecboson_index[i]; //assign the "ith" vector boson to idxVb
+
+      std::cout<<"Which boson is generated? (Z is 23, W is 24) "<<event[idxVb].idAbs()<<std::endl;
+
+      // Keep the daugthers of the vector bosons if they are taus
+      // ........................................................................
+      // Note: The Born leptons are the immediate daugthers of the last vector boson in the event record,
+      //       i.e. the particles input to this function.
+
+      int idxDaugther1 = event[idxVb].daughter1(); //for a particular vector boson, grab the index in the event record for the first daughter
+      int idxDaugther2 = event[idxVb].daughter2(); //for a particular vector boson, grab the index in the event record for the last daughter
+
+      //std::cout<<"indices assigned to daughter 1 and daughter 2"<<std::endl;
+
+      //CHECK WITH HUGO: is is right we only want the 1st and last daughter?
+
+      std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther1].idAbs()<<std::endl;
+      std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther2].idAbs()<<std::endl;
+
+      if ( event[idxDaugther1].idAbs() == 15) tau_index.push_back(idxDaugther1); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
+      if ( event[idxDaugther2].idAbs() == 15) tau_index.push_back(idxDaugther2); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
+    }
+
+  //std::cout<<"tau_index_size: "<<tau_index.size()<<std::endl;
+  // Find tau children 1st generation
+  for (int tau_i=0; tau_i < tau_index.size(); tau_i++) //once have all daughters (which are all taus for us), loop through indices and pull children
+    {
+      if ( event[tau_index[tau_i]].id() == 15) tau_children_index = event[tau_index[tau_i]].daughterList(); //for each index in tau_index, check if antitau or tau and store accordingly
+      if ( event[tau_index[tau_i]].id() == -15) antitau_children_index = event[tau_index[tau_i]].daughterList();
+    }
+  
+  //std::cout<<"tau_children_index_size: "<<tau_children_index.size()<<std::endl;
+  //std::cout<<"antitau_children_index_size: "<<antitau_children_index.size()<<std::endl;
+
+  // Fill truth particle object and store in the collection for each Born tau
+  // -----------------------------------------------------------------------------------
+
+  //std::cout<<"tau_index_size: "<<tau_index.size()<<std::endl;
+
+  if (tau_index.size() != 0)
+    {
+      for (int i_tau = 0; i_tau < tau_index.size(); i_tau++)
+        {
+
+          TruthPart temp_tau;
+          TruthPart* p_temp_tau;
+
+          p_temp_tau = &temp_tau;
+
+          Fill_TruthPart(event, tau_index[i_tau], p_temp_tau);
+
+          // Store the 4 vector in the born tau collection
+          // ..................................................
+
+          p_Tau_Coll->push_back(temp_tau); //has pdgid 
+
+        }
+    }
+
+  //CHECK AND DEBUG
+  // Fill truth particle object and store in the collection for children of tau (separately for tau and antitau)
+  // -----------------------------------------------------------------------------------
+
+     if (tau_children_index.size() != 0)
+    {
+      for (int i_child = 0; i_child < tau_children_index.size(); i_child++)
+        {
+
+          TruthPart temp_tau_child;
+          TruthPart* p_temp_tau_child;
+
+          p_temp_tau_child = &temp_tau_child;
+
+          Fill_TruthPart(event, tau_children_index[i_child], p_temp_tau_child);
+
+          // Store the 4 vector in the born tau decay products collection
+          // ..................................................
+
+          p_TauDecay_Coll->push_back(temp_tau_child); //has pdgid 
+
+        }
+    }
+
+    //antitau
+
+    if (antitau_children_index.size() != 0)
+    {
+      for (int i_child = 0; i_child < antitau_children_index.size(); i_child++)
+        {
+
+          TruthPart temp_antitau_child;
+          TruthPart* p_temp_antitau_child;
+
+          p_temp_antitau_child = &temp_antitau_child;
+
+          Fill_TruthPart(event, antitau_children_index[i_child], p_temp_antitau_child);
+
+          // Store the 4 vector in the born antitau decay products collection
+          // ..................................................
+
+          p_AntiTauDecay_Coll->push_back(temp_antitau_child); //has pdgid 
+
+        }
+    }
+
+}
 
 // ============================================================================================================
 void ANA_utils::TrueJetsReco(Pythia8::Event event, std::vector<int> partskipped, std::vector<TruthJets>* p_TruthJets_Coll, float ptcut, bool doKtSplitting, std::vector<double>* p_KtSplittingScale1, std::vector<double>* p_KtSplittingScale2, std::vector<double>* p_KtSplittingScale3, double R) {

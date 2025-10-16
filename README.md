@@ -35,6 +35,8 @@ Via terminal:
 In terminal, type: ./MyPythia8Simul MyPythia8Simul_Main.cmnd -outroot name_of_root_output > name_of_txt_output.txt 
 ***Note: you don't need to type ".root" for name_of_root_output
 
+If submit via cluster, can check job status by typing in terminal: squeue --me
+
 3) Once this runs, the txt output will be saved under "outfiles" and the root output will be saved under /WplusJetsAnalysis/pythia-outputs
 
 This is all for WplusJetsBaseline. To continue processing, move to WplusJetsAnalysis.

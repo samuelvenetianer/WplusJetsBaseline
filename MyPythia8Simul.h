@@ -157,6 +157,15 @@ class MyAnalysis {
   std::vector<TruthPart> Neutrino_Coll;
   std::vector<TruthPart>* p_Neutrino_Coll;
 
+  std::vector<TruthPart> Tau_Coll;              //SHV 10/15/25 --> tau vector
+  std::vector<TruthPart>* p_Tau_Coll;
+
+  std::vector<TruthPart> TauDecay_Coll;         //SHV 10/15/25 --> children of tau vector
+  std::vector<TruthPart>* p_TauDecay_Coll;
+
+  std::vector<TruthPart> AntiTauDecay_Coll;     //SHV 10/15/25 --> children of antitau vector
+  std::vector<TruthPart>* p_AntiTauDecay_Coll;
+
   std::vector<TruthJets> TruthBareSmallRJets_Coll;
   std::vector<TruthJets>* p_TruthBareSmallRJets_Coll;
 
@@ -227,7 +236,7 @@ class MyAnalysis {
   
   TTree *tree;
 
-  int NumHardJets, nTop, nNeutrino, nMuonBare, nElectronBare, nMuonDress, nElectronDress, nMuonBorn, nElectronBorn, nLightjetBare, nBjetBare, nJetDress, nJetBorn, nLargeRjetDress, nLargeRjetBare, nLargeRjetBorn, nBoson, nPromptPhotons, nLightpartonjet, nBpartonjet;  // BSJ
+  int NumHardJets, nTop, nNeutrino, nMuonBare, nElectronBare, nMuonDress, nElectronDress, nMuonBorn, nElectronBorn, nTauBorn, nLightjetBare, nBjetBare, nJetDress, nJetBorn, nLargeRjetDress, nLargeRjetBare, nLargeRjetBorn, nBoson, nPromptPhotons, nLightpartonjet, nBpartonjet;  // BSJ
   int nMuonReco, nElectronReco, nJetReco;
 
   double Met, Met_phi;
@@ -244,6 +253,7 @@ class MyAnalysis {
   std::vector<int> jet_born_nPart;
   std::vector<int> bjet_bare_nPart;
   std::vector<int> boson_ID;
+  std::vector<int> vecboson_index;      //SHV 10/15/25
 
   std::vector<float> top_pt, top_eta, top_phi, top_E;
   std::vector<float> neutrino_pt, neutrino_eta, neutrino_phi, neutrino_E;
@@ -253,6 +263,7 @@ class MyAnalysis {
   std::vector<float> electron_bare_pt, electron_bare_eta, electron_bare_phi, electron_bare_E, electron_bare_charge;
   std::vector<float> electron_dress_pt, electron_dress_eta, electron_dress_phi, electron_dress_E, electron_dress_charge;
   std::vector<float> electron_born_pt, electron_born_eta, electron_born_phi, electron_born_E, electron_born_charge;
+  std::vector<float> tau_born_pt, tau_born_eta, tau_born_phi, tau_born_E, tau_born_charge;        //SHV 10/15/25
   std::vector<float> lightjet_bare_pt, lightjet_bare_eta, lightjet_bare_phi, lightjet_bare_E;
   std::vector<float> jet_dress_pt, jet_dress_eta, jet_dress_phi, jet_dress_E;
   std::vector<float> bjet_bare_pt, bjet_bare_eta, bjet_bare_phi, bjet_bare_E;

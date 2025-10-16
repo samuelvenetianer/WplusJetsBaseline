@@ -124,4 +124,7 @@ class ANA_utils {
 
   void Get_BottomHadrons(Pythia8::Event event, std::vector<TruthPart> BQuark_Coll, std::vector<TruthPart>* p_BHadrons_Coll);
 
+  //added by SHV 10/7/25
+  
+  void Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_index, std::vector<TruthPart>* p_Tau_Coll, std::vector<TruthPart>* p_TauDecay_Coll, std::vector<TruthPart>* p_AntiTauDecay_Coll);
 };
