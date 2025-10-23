@@ -1342,7 +1342,7 @@ void ANA_utils::Get_VectorBosons(Pythia8::Event event, std::vector<TruthPart>* p
   
   for (int i = event.size() - 1; i > 0; i--) {
     if (event[i].idAbs() == 24 || event[i].idAbs() == 23) {
-      std::cout<<"ID of vector boson saved is: "<<event[i].idAbs()<<std::endl;
+      //std::cout<<"ID of vector boson saved is: "<<event[i].idAbs()<<std::endl;
       if (event[i].iBotCopyId()==i) vecboson_index.push_back(i);
     }
   }
@@ -2032,13 +2032,13 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   // Note: This require using the function Get_VectorBosons, and passing the index of each vector boson as
   //       input to this function
 
-  std::cout<<"vecboson_index size: "<<vecboson_index.size()<<std::endl;
+  //std::cout<<"vecboson_index size: "<<vecboson_index.size()<<std::endl;
 
   for (int i=0; i< vecboson_index.size(); i++) //loop over all vector bosons found in the event (stored in vecboson_index)
     {
       int idxVb = vecboson_index[i]; //assign the "ith" vector boson to idxVb
 
-      std::cout<<"Which boson is generated? (Z is 23, W is 24) "<<event[idxVb].idAbs()<<std::endl;
+      //std::cout<<"Which boson is generated? (Z is 23, W is 24) "<<event[idxVb].idAbs()<<std::endl;
 
       // Keep the daugthers of the vector bosons if they are taus
       // ........................................................................
@@ -2052,8 +2052,8 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
 
       //CHECK WITH HUGO: is is right we only want the 1st and last daughter?
 
-      std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther1].idAbs()<<std::endl;
-      std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther2].idAbs()<<std::endl;
+      // std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther1].idAbs()<<std::endl;
+      // std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther2].idAbs()<<std::endl;
 
       if ( event[idxDaugther1].idAbs() == 15) tau_index.push_back(idxDaugther1); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
       if ( event[idxDaugther2].idAbs() == 15) tau_index.push_back(idxDaugther2); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices

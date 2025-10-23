@@ -236,7 +236,7 @@ class MyAnalysis {
   
   TTree *tree;
 
-  int NumHardJets, nTop, nNeutrino, nMuonBare, nElectronBare, nMuonDress, nElectronDress, nMuonBorn, nElectronBorn, nTauBorn, nLightjetBare, nBjetBare, nJetDress, nJetBorn, nLargeRjetDress, nLargeRjetBare, nLargeRjetBorn, nBoson, nPromptPhotons, nLightpartonjet, nBpartonjet;  // BSJ
+  int NumHardJets, nTop, nNeutrino, nMuonBare, nElectronBare, nMuonDress, nElectronDress, nMuonBorn, nElectronBorn, nTauBorn, nChargedPion, nNeutralPion, nLightjetBare, nBjetBare, nJetDress, nJetBorn, nLargeRjetDress, nLargeRjetBare, nLargeRjetBorn, nBoson, nPromptPhotons, nLightpartonjet, nBpartonjet;  // BSJ
   int nMuonReco, nElectronReco, nJetReco;
 
   double Met, Met_phi;
@@ -264,6 +264,8 @@ class MyAnalysis {
   std::vector<float> electron_dress_pt, electron_dress_eta, electron_dress_phi, electron_dress_E, electron_dress_charge;
   std::vector<float> electron_born_pt, electron_born_eta, electron_born_phi, electron_born_E, electron_born_charge;
   std::vector<float> tau_born_pt, tau_born_eta, tau_born_phi, tau_born_E, tau_born_charge;        //SHV 10/15/25
+  std::vector<float> charged_pion_pt, charged_pion_eta, charged_pion_phi, charged_pion_E, charged_pion_charge;  //SHV 10/23/25
+  std::vector<float> neutral_pion_pt, neutral_pion_eta, neutral_pion_phi, neutral_pion_E, neutral_pion_charge;  //SHV 10/23/25
   std::vector<float> lightjet_bare_pt, lightjet_bare_eta, lightjet_bare_phi, lightjet_bare_E;
   std::vector<float> jet_dress_pt, jet_dress_eta, jet_dress_phi, jet_dress_E;
   std::vector<float> bjet_bare_pt, bjet_bare_eta, bjet_bare_phi, bjet_bare_E;

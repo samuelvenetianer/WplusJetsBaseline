@@ -40,10 +40,13 @@ Beams:eCM = 13000.                      ! CM energy of collision ! originally se
 !    Z0 production; should set mMin
 !    ..............................
 
-WeakSingleBoson:ffbar2gmZ = on          ! q qbar -> gamma*/Z0 inclusive
-WeakBosonAndParton:qqbar2gmZg = on     ! q qbar -> gamma*/Z0 + g
-WeakBosonAndParton:qg2gmZq = on        ! q g -> gamma*/Z + q
+! If have first 3 on, probably double counting something...Have either first or second/third together
+
+WeakSingleBoson:ffbar2gmZ = on          ! q qbar -> gamma*/Z0 inclusive --> uses combination of diagram 1 and 2 to generate events at full energy spectra
+#WeakBosonAndParton:qqbar2gmZg = on     ! q qbar -> gamma*/Z0 + g --> does a really good job with hard processes (high pT) - diagram 2
+#WeakBosonAndParton:qg2gmZq = on        ! q g -> gamma*/Z + q --> same as above - always turned on with #2
 WeakZ0:gmZmode = 0                     ! 0 = full gamma*/Z0 interference structue, 1 = pure gamma* contribution, 2 = pure Z0 contribution
+
 
 
 

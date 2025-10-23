@@ -152,11 +152,17 @@ void MyAnalysis::init()
   tree->Branch("tau_born_E",&tau_born_E);
   tree->Branch("tau_born_charge",&tau_born_charge);
 
-  tree->Branch("tau_born_pt",&tau_born_pt);   // SHV
-  tree->Branch("tau_born_eta",&tau_born_eta);
-  tree->Branch("tau_born_phi",&tau_born_phi);
-  tree->Branch("tau_born_E",&tau_born_E);
-  tree->Branch("tau_born_charge",&tau_born_charge);
+  tree->Branch("charged_pion_pt", &charged_pion_pt); // SHV - includes pi plus and pi minus
+  tree->Branch("charged_pion_eta", &charged_pion_eta);
+  tree->Branch("charged_pion_phi", &charged_pion_phi);
+  tree->Branch("charged_pion_E", &charged_pion_E);
+  tree->Branch("charged_pion_charge", &charged_pion_charge);
+
+  tree->Branch("neutral_pion_pt", &neutral_pion_pt); // SHV
+  tree->Branch("neutral_pion_eta", &neutral_pion_eta);
+  tree->Branch("neutral_pion_phi", &neutral_pion_phi);
+  tree->Branch("neutral_pion_E", &neutral_pion_E);
+  tree->Branch("neutral_pion_charge", &neutral_pion_charge);
 
   tree->Branch("boson_pt",&boson_pt);
   tree->Branch("boson_eta",&boson_eta);
@@ -268,6 +274,7 @@ void MyAnalysis::init()
   tree->Branch("nBoson",&nBoson);
   tree->Branch("nPromptPhoton",&nPromptPhotons);
   tree->Branch("nTauBorn", &nTauBorn);              //SHV 10/15/25 - counts taus and antitaus together
+  tree->Branch("nChargedPion", &nChargedPion);      //SHV 10/23/25 - counts pi plus and pi minus together
   tree->Branch("Met",&Met);
   tree->Branch("Met_phi",&Met_phi);
 
@@ -892,11 +899,11 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     //Tau Born only, count taus and antitaus together
     nTauBorn = 0;
 
-    std::cout<<"p_Tau_Coll size: "<<p_Tau_Coll->size()<<std::endl;
+    // std::cout<<"p_Tau_Coll size: "<<p_Tau_Coll->size()<<std::endl;
 
     if (p_Tau_Coll->size() != 0)
       {
-        std::cout<<"There are taus!"<<std::endl;
+        //std::cout<<"There are taus!"<<std::endl;
         for (size_t i = 0; i < p_Tau_Coll->size(); i++)
           {
             if ((Tau_Coll[i]).Pdgid() == 15 || (Tau_Coll[i]).Pdgid() == -15) //tau is 15, antitau is -15
@@ -909,6 +916,53 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
                 tau_born_E.push_back((Tau_Coll[i]).E());
                 tau_born_charge.push_back((Tau_Coll[i]).Charge());
                 nTauBorn += 1;
+              }
+          }
+      }
+
+    // Investigate tau decay products
+
+    //Do this for antitau decay products as well
+
+    nChargedPion = 0; //Counts pi minus and pi plus
+    nNeutralPion = 0; 
+
+    //std::cout<<"p_TauDecay_Coll size: "<<p_TauDecay_Coll->size()<<std::endl;
+
+    if (p_TauDecay_Coll->size() != 0)
+      {
+        //std::cout<<"There are decay products from the tau!"<<std::endl;
+        for (size_t i = 0; i < p_TauDecay_Coll->size(); i++)
+          {
+            //std::cout<<"PDGID of decay product: "<<TauDecay_Coll[i].Pdgid() <<std::endl;
+
+            //Save out pions first as a test - put charged pions together, neutral pions separate.
+
+            //charged pions
+            if ((TauDecay_Coll[i]).Pdgid() == 211 || (TauDecay_Coll[i]).Pdgid() == -211) //pi plus is 211, pi minus is -211
+
+              {
+                charged_pion_pt.push_back((TauDecay_Coll[i]).Pt());
+                charged_pion_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                charged_pion_phi.push_back(i_phi);
+                charged_pion_E.push_back((TauDecay_Coll[i]).E());
+                charged_pion_charge.push_back((TauDecay_Coll[i]).Charge());
+                nChargedPion += 1;
+                std::cout<<"Stored a charged pion!!"<<std::endl;
+              }
+            if ((TauDecay_Coll[i]).Pdgid() == 111)
+              {
+                neutral_pion_pt.push_back((TauDecay_Coll[i]).Pt());
+                neutral_pion_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                neutral_pion_phi.push_back(i_phi);
+                neutral_pion_E.push_back((TauDecay_Coll[i]).E());
+                neutral_pion_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nNeutralPion += 1;
+                std::cout<<"Stored a neutral pion!!"<<std::endl;
               }
           }
       }
@@ -1163,6 +1217,18 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     tau_born_phi.clear();
     tau_born_E.clear();
     tau_born_charge.clear();
+
+    charged_pion_pt.clear();
+    charged_pion_eta.clear();
+    charged_pion_phi.clear();
+    charged_pion_E.clear();
+    charged_pion_charge.clear();
+
+    neutral_pion_pt.clear();
+    neutral_pion_eta.clear();
+    neutral_pion_phi.clear();
+    neutral_pion_E.clear();
+    neutral_pion_charge.clear();
 
     bjet_bare_pt.clear();
     bjet_bare_eta.clear();
