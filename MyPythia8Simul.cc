@@ -164,6 +164,44 @@ void MyAnalysis::init()
   tree->Branch("neutral_pion_E", &neutral_pion_E);
   tree->Branch("neutral_pion_charge", &neutral_pion_charge);
 
+  //add muons, muon neutrinos, electrons, and electron neutrinos produced in tau decay here SHV
+
+  tree->Branch("tau_muon_pt", &tau_muon_pt); // SHV
+  tree->Branch("tau_muon_eta", &tau_muon_eta);
+  tree->Branch("tau_muon_phi", &tau_muon_phi);
+  tree->Branch("tau_muon_E", &tau_muon_E);
+  tree->Branch("tau_muon_charge", &tau_muon_charge);
+
+  tree->Branch("tau_muonantinu_pt", &tau_muonantinu_pt); // SHV
+  tree->Branch("tau_muonantinu_eta", &tau_muonantinu_eta);
+  tree->Branch("tau_muonantinu_phi", &tau_muonantinu_phi);
+  tree->Branch("tau_muonantinu_E", &tau_muonantinu_E);
+  tree->Branch("tau_muonantinu_charge", &tau_muonantinu_charge);
+
+  tree->Branch("tau_muonnu_pt", &tau_muonnu_pt); // SHV
+  tree->Branch("tau_muonnu_eta", &tau_muonnu_eta);
+  tree->Branch("tau_muonnu_phi", &tau_muonnu_phi);
+  tree->Branch("tau_muonnu_E", &tau_muonnu_E);
+  tree->Branch("tau_muonnu_charge", &tau_muonnu_charge);
+
+  tree->Branch("tau_electron_pt", &tau_electron_pt); // SHV
+  tree->Branch("tau_electron_eta", &tau_electron_eta);
+  tree->Branch("tau_electron_phi", &tau_electron_phi);
+  tree->Branch("tau_electron_E", &tau_electron_E);
+  tree->Branch("tau_electron_charge", &tau_electron_charge);
+
+  tree->Branch("tau_electronantinu_pt", &tau_electronantinu_pt); // SHV
+  tree->Branch("tau_electronantinu_eta", &tau_electronantinu_eta);
+  tree->Branch("tau_electronantinu_phi", &tau_electronantinu_phi);
+  tree->Branch("tau_electronantinu_E", &tau_electronantinu_E);
+  tree->Branch("tau_electronantinu_charge", &tau_electronantinu_charge);
+
+  tree->Branch("tau_electronnu_pt", &tau_electronnu_pt); // SHV
+  tree->Branch("tau_electronnu_eta", &tau_electronnu_eta);
+  tree->Branch("tau_electronnu_phi", &tau_electronnu_phi);
+  tree->Branch("tau_electronnu_E", &tau_electronnu_E);
+  tree->Branch("tau_electronnu_charge", &tau_electronnu_charge);
+
   tree->Branch("boson_pt",&boson_pt);
   tree->Branch("boson_eta",&boson_eta);
   tree->Branch("boson_phi",&boson_phi);
@@ -275,6 +313,13 @@ void MyAnalysis::init()
   tree->Branch("nPromptPhoton",&nPromptPhotons);
   tree->Branch("nTauBorn", &nTauBorn);              //SHV 10/15/25 - counts taus and antitaus together
   tree->Branch("nChargedPion", &nChargedPion);      //SHV 10/23/25 - counts pi plus and pi minus together
+  tree->Branch("nNeutralPion", &nNeutralPion);      //SHV 11/12/25
+  tree->Branch("nTauMuon", &nTauMuon);              //SHV 11/12/25
+  tree->Branch("nTauMuonAntiNu", &nTauMuonAntiNu);  //SHV 11/12/25
+  tree->Branch("nTauMuonNu", &nTauMuonNu);          //SHV 11/12/25
+  tree->Branch("nTauElectron", &nTauElectron);      //SHV 11/12/25
+  tree->Branch("nTauElectronAntiNu", &nTauElectronAntiNu);  //SHV 11/12/25
+  tree->Branch("nTauElectronNu", &nTauElectronNu);  //SHV 11/12/25
   tree->Branch("Met",&Met);
   tree->Branch("Met_phi",&Met_phi);
 
@@ -926,6 +971,12 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
 
     nChargedPion = 0; //Counts pi minus and pi plus
     nNeutralPion = 0; 
+    nTauMuon = 0;
+    nTauMuonAntiNu = 0;
+    nTauMuonNu = 0;
+    nTauElectron = 0;
+    nTauElectronAntiNu = 0;
+    nTauElectronNu = 0;
 
     //std::cout<<"p_TauDecay_Coll size: "<<p_TauDecay_Coll->size()<<std::endl;
 
@@ -950,8 +1001,9 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
                 charged_pion_E.push_back((TauDecay_Coll[i]).E());
                 charged_pion_charge.push_back((TauDecay_Coll[i]).Charge());
                 nChargedPion += 1;
-                std::cout<<"Stored a charged pion!!"<<std::endl;
+                //std::cout<<"Stored a charged pion!!"<<std::endl;
               }
+            //neutral pions
             if ((TauDecay_Coll[i]).Pdgid() == 111)
               {
                 neutral_pion_pt.push_back((TauDecay_Coll[i]).Pt());
@@ -962,11 +1014,183 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
                 neutral_pion_E.push_back((TauDecay_Coll[i]).E());
                 neutral_pion_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
                 nNeutralPion += 1;
-                std::cout<<"Stored a neutral pion!!"<<std::endl;
+                //std::cout<<"Stored a neutral pion!!"<<std::endl;
+              }
+            //muons
+            if ((TauDecay_Coll[i]).Pdgid() == 13)
+              {
+                tau_muon_pt.push_back((TauDecay_Coll[i]).Pt());
+                tau_muon_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_muon_phi.push_back(i_phi);
+                tau_muon_E.push_back((TauDecay_Coll[i]).E());
+                tau_muon_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauMuon += 1;
+                //std::cout<<"Stored a muon!!"<<std::endl;
+              }
+            //muon antineutrino
+            if ((TauDecay_Coll[i]).Pdgid() == -14)
+              {
+                tau_muonantinu_pt.push_back((TauDecay_Coll[i]).Pt());
+                tau_muonantinu_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_muonantinu_phi.push_back(i_phi);
+                tau_muonantinu_E.push_back((TauDecay_Coll[i]).E());
+                tau_muonantinu_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauMuonAntiNu += 1;
+                //std::cout<<"Stored a muon antineutrino!!"<<std::endl;
+              }
+            //electrons
+            if ((TauDecay_Coll[i]).Pdgid() == 11)
+              {
+                tau_electron_pt.push_back((TauDecay_Coll[i]).Pt());
+                tau_electron_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_electron_phi.push_back(i_phi);
+                tau_electron_E.push_back((TauDecay_Coll[i]).E());
+                tau_electron_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauElectron += 1;
+                //std::cout<<"Stored an electron!!"<<std::endl;
+              }
+            //electron antineutrino
+            if ((TauDecay_Coll[i]).Pdgid() == -12)
+              {
+                tau_electronantinu_pt.push_back((TauDecay_Coll[i]).Pt());
+                tau_electronantinu_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_electronantinu_phi.push_back(i_phi);
+                tau_electronantinu_E.push_back((TauDecay_Coll[i]).E());
+                tau_electronantinu_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauElectronAntiNu += 1;
+                //std::cout<<"Stored an electron antineutrino!!"<<std::endl;
               }
           }
       }
     
+
+    std::cout<<"p_AntiTauDecay_Coll size: "<<p_AntiTauDecay_Coll->size()<<std::endl;
+    if (p_AntiTauDecay_Coll->size() != 0)
+      {
+        std::cout<<"There are decay products from the antitau!"<<std::endl;
+        for (size_t i = 0; i < p_AntiTauDecay_Coll->size(); i++)
+          {
+            //std::cout<<"PDGID of decay product: "<<AntiTauDecay_Coll[i].Pdgid() <<std::endl;
+
+            //charged pions
+            if ((AntiTauDecay_Coll[i]).Pdgid() == 211 || (AntiTauDecay_Coll[i]).Pdgid() == -211) //pi plus is 211, pi minus is -211
+
+              {
+                charged_pion_pt.push_back((AntiTauDecay_Coll[i]).Pt());
+                charged_pion_eta.push_back((AntiTauDecay_Coll[i]).Eta());
+                double i_phi = (AntiTauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (AntiTauDecay_Coll[i]).Phi() + 6.283185307;	      
+                charged_pion_phi.push_back(i_phi);
+                charged_pion_E.push_back((AntiTauDecay_Coll[i]).E());
+                charged_pion_charge.push_back((AntiTauDecay_Coll[i]).Charge());
+                nChargedPion += 1;
+                //std::cout<<"Stored a charged pion from AntiTau!!"<<std::endl;
+              }
+            //neutral pions
+            if ((AntiTauDecay_Coll[i]).Pdgid() == 111)
+              {
+                neutral_pion_pt.push_back((AntiTauDecay_Coll[i]).Pt());
+                neutral_pion_eta.push_back((AntiTauDecay_Coll[i]).Eta());
+                double i_phi = (AntiTauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (AntiTauDecay_Coll[i]).Phi() + 6.283185307;	      
+                neutral_pion_phi.push_back(i_phi);
+                neutral_pion_E.push_back((AntiTauDecay_Coll[i]).E());
+                neutral_pion_charge.push_back((AntiTauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nNeutralPion += 1;
+                //std::cout<<"Stored a neutral pion from AntiTau!!"<<std::endl;
+              }
+            //muons
+            if ((AntiTauDecay_Coll[i]).Pdgid() == 13 || (AntiTauDecay_Coll[i]).Pdgid() == -13) //mu minus is 13, mu plus is -13
+              {
+                tau_muon_pt.push_back((AntiTauDecay_Coll[i]).Pt());
+                tau_muon_eta.push_back((AntiTauDecay_Coll[i]).Eta());
+                double i_phi = (AntiTauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (AntiTauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_muon_phi.push_back(i_phi);
+                tau_muon_E.push_back((AntiTauDecay_Coll[i]).E());
+                tau_muon_charge.push_back((AntiTauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauMuon += 1;
+                //std::cout<<"Stored a muon from AntiTau!!"<<std::endl;
+              }
+            //muon antineutrino
+            if ((AntiTauDecay_Coll[i]).Pdgid() == -14)
+              {
+                tau_muonantinu_pt.push_back((TauDecay_Coll[i]).Pt());
+                tau_muonantinu_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_muonantinu_phi.push_back(i_phi);
+                tau_muonantinu_E.push_back((TauDecay_Coll[i]).E());
+                tau_muonantinu_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauMuonAntiNu += 1;
+                //std::cout<<"Stored a muon antineutrino from AntiTau!!"<<std::endl;
+              }
+
+            //muon neutrino
+            if ((AntiTauDecay_Coll[i]).Pdgid() == 14)
+              {
+                tau_muonnu_pt.push_back((AntiTauDecay_Coll[i]).Pt());
+                tau_muonnu_eta.push_back((AntiTauDecay_Coll[i]).Eta());
+                double i_phi = (AntiTauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (AntiTauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_muonnu_phi.push_back(i_phi);
+                tau_muonnu_E.push_back((AntiTauDecay_Coll[i]).E());
+                tau_muonnu_charge.push_back((AntiTauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauMuonNu += 1;
+                //std::cout<<"Stored a muon neutrino from AntiTau!!"<<std::endl;
+              }
+
+            //electrons & positrons
+            if ((AntiTauDecay_Coll[i]).Pdgid() == 11 || (AntiTauDecay_Coll[i]).Pdgid() == -11) //11 is electron, -11 is positron
+              {
+                tau_electron_pt.push_back((AntiTauDecay_Coll[i]).Pt());
+                tau_electron_eta.push_back((AntiTauDecay_Coll[i]).Eta());
+                double i_phi = (AntiTauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (AntiTauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_electron_phi.push_back(i_phi);
+                tau_electron_E.push_back((AntiTauDecay_Coll[i]).E());
+                tau_electron_charge.push_back((AntiTauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauElectron += 1;
+                //std::cout<<"Stored an electron from AntiTau!!"<<std::endl;
+              }
+            //electron antineutrino
+            if ((TauDecay_Coll[i]).Pdgid() == -12)
+              {
+                tau_electronantinu_pt.push_back((TauDecay_Coll[i]).Pt());
+                tau_electronantinu_eta.push_back((TauDecay_Coll[i]).Eta());
+                double i_phi = (TauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (TauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_electronantinu_phi.push_back(i_phi);
+                tau_electronantinu_E.push_back((TauDecay_Coll[i]).E());
+                tau_electronantinu_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauElectronAntiNu += 1;
+                //std::cout<<"Stored an electron antineutrino from AntiTau!!"<<std::endl;
+              }
+            
+            //electron neutrino
+            if ((AntiTauDecay_Coll[i]).Pdgid() == 12)
+              {
+                tau_electronnu_pt.push_back((AntiTauDecay_Coll[i]).Pt());
+                tau_electronnu_eta.push_back((AntiTauDecay_Coll[i]).Eta());
+                double i_phi = (AntiTauDecay_Coll[i]).Phi();
+                if (i_phi < 0.) i_phi = (AntiTauDecay_Coll[i]).Phi() + 6.283185307;	      
+                tau_electronnu_phi.push_back(i_phi);
+                tau_electronnu_E.push_back((AntiTauDecay_Coll[i]).E());
+                tau_electronnu_charge.push_back((AntiTauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
+                nTauElectronNu += 1;
+                //std::cout<<"Stored an electron neutrino from AntiTau!!"<<std::endl;
+              }
+          }
+      }
+
     // Electrons and muons
     // ...................
 
@@ -1229,6 +1453,42 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     neutral_pion_phi.clear();
     neutral_pion_E.clear();
     neutral_pion_charge.clear();
+
+    tau_muon_pt.clear();
+    tau_muon_eta.clear();
+    tau_muon_phi.clear();
+    tau_muon_E.clear();
+    tau_muon_charge.clear();
+
+    tau_muonantinu_pt.clear();
+    tau_muonantinu_eta.clear();
+    tau_muonantinu_phi.clear();
+    tau_muonantinu_E.clear();
+    tau_muonantinu_charge.clear();
+
+    tau_muonnu_pt.clear();
+    tau_muonnu_eta.clear();
+    tau_muonnu_phi.clear();
+    tau_muonnu_E.clear();
+    tau_muonnu_charge.clear();
+
+    tau_electron_pt.clear();
+    tau_electron_eta.clear();
+    tau_electron_phi.clear();
+    tau_electron_E.clear();
+    tau_electron_charge.clear();
+
+    tau_electronantinu_pt.clear();
+    tau_electronantinu_eta.clear();
+    tau_electronantinu_phi.clear();
+    tau_electronantinu_E.clear();
+    tau_electronantinu_charge.clear();
+
+    tau_electronnu_pt.clear();
+    tau_electronnu_eta.clear();
+    tau_electronnu_phi.clear();
+    tau_electronnu_E.clear();
+    tau_electronnu_charge.clear();
 
     bjet_bare_pt.clear();
     bjet_bare_eta.clear();

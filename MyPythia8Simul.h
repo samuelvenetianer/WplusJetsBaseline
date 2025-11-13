@@ -236,7 +236,7 @@ class MyAnalysis {
   
   TTree *tree;
 
-  int NumHardJets, nTop, nNeutrino, nMuonBare, nElectronBare, nMuonDress, nElectronDress, nMuonBorn, nElectronBorn, nTauBorn, nChargedPion, nNeutralPion, nLightjetBare, nBjetBare, nJetDress, nJetBorn, nLargeRjetDress, nLargeRjetBare, nLargeRjetBorn, nBoson, nPromptPhotons, nLightpartonjet, nBpartonjet;  // BSJ
+  int NumHardJets, nTop, nNeutrino, nMuonBare, nElectronBare, nMuonDress, nElectronDress, nMuonBorn, nElectronBorn, nTauBorn, nChargedPion, nNeutralPion, nTauMuon, nTauMuonAntiNu, nTauMuonNu, nTauElectron, nTauElectronAntiNu, nTauElectronNu, nLightjetBare, nBjetBare, nJetDress, nJetBorn, nLargeRjetDress, nLargeRjetBare, nLargeRjetBorn, nBoson, nPromptPhotons, nLightpartonjet, nBpartonjet;  // BSJ
   int nMuonReco, nElectronReco, nJetReco;
 
   double Met, Met_phi;
@@ -266,6 +266,12 @@ class MyAnalysis {
   std::vector<float> tau_born_pt, tau_born_eta, tau_born_phi, tau_born_E, tau_born_charge;        //SHV 10/15/25
   std::vector<float> charged_pion_pt, charged_pion_eta, charged_pion_phi, charged_pion_E, charged_pion_charge;  //SHV 10/23/25
   std::vector<float> neutral_pion_pt, neutral_pion_eta, neutral_pion_phi, neutral_pion_E, neutral_pion_charge;  //SHV 10/23/25
+  std::vector<float> tau_muon_pt, tau_muon_eta, tau_muon_phi, tau_muon_E, tau_muon_charge; //SHV 11/12/25
+  std::vector<float> tau_muonantinu_pt, tau_muonantinu_eta, tau_muonantinu_phi, tau_muonantinu_E, tau_muonantinu_charge; //SHV 11/12/25
+  std::vector<float> tau_muonnu_pt, tau_muonnu_eta, tau_muonnu_phi, tau_muonnu_E, tau_muonnu_charge; //SHV 11/12/25
+  std::vector<float> tau_electron_pt, tau_electron_eta, tau_electron_phi, tau_electron_E, tau_electron_charge; //SHV 11/12/25
+  std::vector<float> tau_electronantinu_pt, tau_electronantinu_eta, tau_electronantinu_phi, tau_electronantinu_E, tau_electronantinu_charge; //SHV 11/12/25
+  std::vector<float> tau_electronnu_pt, tau_electronnu_eta, tau_electronnu_phi, tau_electronnu_E, tau_electronnu_charge; //SHV 11/12/25
   std::vector<float> lightjet_bare_pt, lightjet_bare_eta, lightjet_bare_phi, lightjet_bare_E;
   std::vector<float> jet_dress_pt, jet_dress_eta, jet_dress_phi, jet_dress_E;
   std::vector<float> bjet_bare_pt, bjet_bare_eta, bjet_bare_phi, bjet_bare_E;
