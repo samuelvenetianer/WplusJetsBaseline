@@ -982,11 +982,15 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
 
     if (p_TauDecay_Coll->size() != 0)
       {
+        std::cout << "Number of decay products from tau: " << p_TauDecay_Coll->size() << std::endl;
         //std::cout<<"There are decay products from the tau!"<<std::endl;
         for (size_t i = 0; i < p_TauDecay_Coll->size(); i++)
           {
-            //std::cout<<"PDGID of decay product: "<<TauDecay_Coll[i].Pdgid() <<std::endl;
+            std::cout<<"PDGID of decay product: "<<TauDecay_Coll[i].Pdgid() <<std::endl;
 
+            // print if missing some PDGIDs for children
+
+            if ((TauDecay_Coll[i]).Pdgid() != 211)
             //Save out pions first as a test - put charged pions together, neutral pions separate.
 
             //charged pions
@@ -1001,7 +1005,10 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
                 charged_pion_E.push_back((TauDecay_Coll[i]).E());
                 charged_pion_charge.push_back((TauDecay_Coll[i]).Charge());
                 nChargedPion += 1;
-                //std::cout<<"Stored a charged pion!!"<<std::endl;
+                std::cout<<"Stored a charged pion!!"<<std::endl;
+                std::cout << "nChargedPion: " << nChargedPion << std::endl;
+
+                
               }
             //neutral pions
             if ((TauDecay_Coll[i]).Pdgid() == 111)
@@ -1014,6 +1021,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
                 neutral_pion_E.push_back((TauDecay_Coll[i]).E());
                 neutral_pion_charge.push_back((TauDecay_Coll[i]).Charge()); //store for now just to make sure these are neutral
                 nNeutralPion += 1;
+                //std::cout << "nNeutralPion: " << nNeutralPion << std::endl;
                 //std::cout<<"Stored a neutral pion!!"<<std::endl;
               }
             //muons
@@ -1072,10 +1080,10 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
       }
     
 
-    std::cout<<"p_AntiTauDecay_Coll size: "<<p_AntiTauDecay_Coll->size()<<std::endl;
+    // std::cout<<"p_AntiTauDecay_Coll size: "<<p_AntiTauDecay_Coll->size()<<std::endl;
     if (p_AntiTauDecay_Coll->size() != 0)
       {
-        std::cout<<"There are decay products from the antitau!"<<std::endl;
+        // std::cout<<"There are decay products from the antitau!"<<std::endl;
         for (size_t i = 0; i < p_AntiTauDecay_Coll->size(); i++)
           {
             //std::cout<<"PDGID of decay product: "<<AntiTauDecay_Coll[i].Pdgid() <<std::endl;
@@ -1584,6 +1592,9 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     DressPhoton_Coll.clear();
     Neutrino_Coll.clear();
     Tau_Coll.clear();            //SHV 10/15/25
+    TauDecay_Coll.clear();
+    AntiTauDecay_Coll.clear();
+
 
 
     TruthBareSmallRJets_Coll.clear();

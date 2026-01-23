@@ -2024,8 +2024,8 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   // --------------------------------------------------
 
   std::vector<int> tau_index;
-  std::vector<int> tau_children_index; //storing children info separately for tau and antitau
-  std::vector<int> antitau_children_index; //storing children info separately for tau and antitau
+  std::vector<int> tau_children_index; //storing children for tau
+  std::vector<int> antitau_children_index; //storing children for antitau
 
   // Loop over all vector bosons found in the event
   // ..............................................
@@ -2037,39 +2037,65 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   for (int i=0; i< vecboson_index.size(); i++) //loop over all vector bosons found in the event (stored in vecboson_index)
     {
       int idxVb = vecboson_index[i]; //assign the "ith" vector boson to idxVb
+      
+      std::cout << "index for this vector boson is: " << idxVb << std::endl;
 
-      //std::cout<<"Which boson is generated? (Z is 23, W is 24) "<<event[idxVb].idAbs()<<std::endl;
+      std::cout<< "ID of boson generated is (Z is 23, W is 24):  "<<event[idxVb].idAbs()<<std::endl;
 
       // Keep the daugthers of the vector bosons if they are taus
       // ........................................................................
       // Note: The Born leptons are the immediate daugthers of the last vector boson in the event record,
       //       i.e. the particles input to this function.
 
+
+      // something is going wrong starting here I think. print all output. 
+      // tau_index[tau_i] is giving indices greater than the number of events so I think it is tweaking
+      // throws a print error but not an error in the actual code for some reason.
+      // need to better understand what is being pulled from here on down
+
       int idxDaugther1 = event[idxVb].daughter1(); //for a particular vector boson, grab the index in the event record for the first daughter
       int idxDaugther2 = event[idxVb].daughter2(); //for a particular vector boson, grab the index in the event record for the last daughter
+      std::cout<<"Is this first daughter final (1 is yes, 0 is no)?" << event[idxDaugther1].isFinal() << std::endl;
+
+       std::cout << "Index for first daughter is: " << event[idxVb].daughter1() << std::endl;
+       std::cout << "index for last daughter is:: " << event[idxVb].daughter2() << std::endl;
 
       //std::cout<<"indices assigned to daughter 1 and daughter 2"<<std::endl;
 
-      //CHECK WITH HUGO: is is right we only want the 1st and last daughter?
+      //CHECK WITH HUGO: is is right we only want the 1st and last daughter? I think yes, there are only 2.
 
       // std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther1].idAbs()<<std::endl;
       // std::cout<<"PDG id of daughter1 (we want 15): "<<event[idxDaugther2].idAbs()<<std::endl;
 
       if ( event[idxDaugther1].idAbs() == 15) tau_index.push_back(idxDaugther1); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
       if ( event[idxDaugther2].idAbs() == 15) tau_index.push_back(idxDaugther2); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
+    
     }
+
+    //std::cout << "number of taus: " << tau_index.size() << std::endl;
 
   //std::cout<<"tau_index_size: "<<tau_index.size()<<std::endl;
   // Find tau children 1st generation
   for (int tau_i=0; tau_i < tau_index.size(); tau_i++) //once have all daughters (which are all taus for us), loop through indices and pull children
     {
+      //int test = tau_index[tau_i];
+
+      // std::cout << "tau_i: " << tau_i << std::endl;
+      // std::cout << "tau_index[tau_i]: " << tau_index[tau_i] << std::endl;
+      // std::cout << "event[tau_index[tau_i]].id(): " << event[tau_index[tau_i]].id() << std::endl;
+
       if ( event[tau_index[tau_i]].id() == 15) tau_children_index = event[tau_index[tau_i]].daughterList(); //for each index in tau_index, check if antitau or tau and store accordingly
       if ( event[tau_index[tau_i]].id() == -15) antitau_children_index = event[tau_index[tau_i]].daughterList();
     }
   
-  //std::cout<<"tau_children_index_size: "<<tau_children_index.size()<<std::endl;
-  //std::cout<<"antitau_children_index_size: "<<antitau_children_index.size()<<std::endl;
+  std::cout<<"tau_children_index_size: "<<tau_children_index.size()<<std::endl;
+  std::cout<<"antitau_children_index_size: "<<antitau_children_index.size()<<std::endl;
 
+  for (int child_i=0; child_i < tau_children_index.size(); child_i++)
+  {
+    std::cout << "Checking if child of tau is final" << std::endl;
+    std::cout << "Is this child of tau final (1 is yes, 0 is no)?" << event[tau_children_index[child_i]].isFinal() << std::endl;
+  }
   // Fill truth particle object and store in the collection for each Born tau
   // -----------------------------------------------------------------------------------
 
@@ -2099,7 +2125,7 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   // Fill truth particle object and store in the collection for children of tau (separately for tau and antitau)
   // -----------------------------------------------------------------------------------
 
-     if (tau_children_index.size() != 0)
+     if (tau_children_index.size() != 0) // don't need because if 0, for loop runs 0-->0 and won't execute
     {
       for (int i_child = 0; i_child < tau_children_index.size(); i_child++)
         {
@@ -2108,7 +2134,6 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
           TruthPart* p_temp_tau_child;
 
           p_temp_tau_child = &temp_tau_child;
-
           Fill_TruthPart(event, tau_children_index[i_child], p_temp_tau_child);
 
           // Store the 4 vector in the born tau decay products collection
