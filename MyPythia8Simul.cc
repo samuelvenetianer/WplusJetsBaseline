@@ -982,11 +982,11 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
 
     if (p_TauDecay_Coll->size() != 0)
       {
-        std::cout << "Number of decay products from tau: " << p_TauDecay_Coll->size() << std::endl;
+        // std::cout << "Number of decay products from tau: " << p_TauDecay_Coll->size() << std::endl;
         //std::cout<<"There are decay products from the tau!"<<std::endl;
         for (size_t i = 0; i < p_TauDecay_Coll->size(); i++)
           {
-            std::cout<<"PDGID of decay product: "<<TauDecay_Coll[i].Pdgid() <<std::endl;
+            // std::cout<<"PDGID of decay product: "<<TauDecay_Coll[i].Pdgid() <<std::endl;
 
             // print if missing some PDGIDs for children
 
@@ -1005,8 +1005,8 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
                 charged_pion_E.push_back((TauDecay_Coll[i]).E());
                 charged_pion_charge.push_back((TauDecay_Coll[i]).Charge());
                 nChargedPion += 1;
-                std::cout<<"Stored a charged pion!!"<<std::endl;
-                std::cout << "nChargedPion: " << nChargedPion << std::endl;
+                // std::cout<<"Stored a charged pion!!"<<std::endl;
+                // std::cout << "nChargedPion: " << nChargedPion << std::endl;
 
                 
               }
