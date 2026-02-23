@@ -79,7 +79,7 @@ Examples are included.<br />
 
 `MyPythiaSimul.h`:<br />
 1. FUNCTION: Declare containers & pointers:<br />
-    std::vector<TruthPart> Tau_Coll;<br />     
+    std::vector<TruthPart> Tau_Coll;<br /> 
     std::vector<TruthPart>* p_Tau_Coll;<br />
 2. VARIABLES: Declare multiplicities and kinematic veriables:<br />
     int nTauBorn<br />
