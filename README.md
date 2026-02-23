@@ -6,6 +6,8 @@ Outputs a file with truth-level and reco-level data.
 
 These instructions are a quick reference for running. For more information about steering, see Ben's full instructions and explanation at: https://github.com/bjohns664297/WplusJetsBaseline
 
+### Setup Instructions<br />
+
 1) Once logging into cluster, type the following 4 commands one after another in the terminal (or see RootCopyPasta.txt in WplusJetsAnalysis): 
 
 srun --pty -p largemem --time=0-12:00:00 bash
@@ -41,7 +43,8 @@ If submit via cluster, can check job status by typing in terminal: squeue --me
 
 This is all for WplusJetsBaseline. To continue processing, move to WplusJetsAnalysis.
 
-### Directions for adding new functions & variables ### <br />
+### Directions for adding new functions & variables<br />
+Examples are included.<br /> 
 
 `ANA_utils.cc`: <br />
 1. FUNCTION: Add new function and short description into revelant comment block (i.e. Truth Level Particle Reconstruction Functions) <br />
@@ -76,7 +79,7 @@ This is all for WplusJetsBaseline. To continue processing, move to WplusJetsAnal
 
 `MyPythiaSimul.h`:<br />
 1. FUNCTION: Declare containers & pointers:<br />
-    std::vector<TruthPart> Tau_Coll;     <br />     
+    std::vector<TruthPart> Tau_Coll;<br />     
     std::vector<TruthPart>* p_Tau_Coll;<br />
 2. VARIABLES: Declare multiplicities and kinematic veriables:<br />
     int nTauBorn<br />
