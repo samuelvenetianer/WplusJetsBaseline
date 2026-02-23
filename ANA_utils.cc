@@ -2008,7 +2008,7 @@ void ANA_utils::Get_BornPromptLepton(Pythia8::Event event, std::vector<int> vecb
 }
 // ============================================================================================================
 
-void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_index, std::vector<TruthPart>* p_Tau_Coll, std::vector<TruthPart>* p_TauDecay_Coll, std::vector<TruthPart>* p_AntiTauDecay_Coll) {
+void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_index, std::vector<TruthPart>* p_Tau_Coll, std::vector<TruthPart>* p_AntiTau_Coll, std::vector<TruthPart>* p_TauDecay_Coll, std::vector<TruthPart>* p_AntiTauDecay_Coll) {
 
 //MODEL AFTER THIS, CHANGE IDs TO BE TAUS, SAVE TAU INFO
 //UPDATE COMMENTS
@@ -2024,8 +2024,11 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   // --------------------------------------------------
 
   std::vector<int> tau_index;
+  std::vector<int> antitau_index;
+
   std::vector<int> tau_children_index; //storing children for tau
   std::vector<int> antitau_children_index; //storing children for antitau
+  std::vector<int> vb_children_index_list;
 
   // Loop over all vector bosons found in the event
   // ..............................................
@@ -2045,21 +2048,66 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
       int idxDaugther1 = event[idxVb].daughter1(); //for a particular vector boson, grab the index in the event record for the first daughter
       int idxDaugther2 = event[idxVb].daughter2(); //for a particular vector boson, grab the index in the event record for the last daughter
       
+      // std::cout << "PDGID of boson : " << event[idxVb].idAbs() << std::endl;
       // std::cout<< "Is this first daughter final (1 is yes, 0 is no)?" << event[idxDaugther1].isFinal() << std::endl;
-      // std::cout << "Index for first daughter is: " << event[idxVb].daughter1() << std::endl;
-      // std::cout << "index for last daughter is:: " << event[idxVb].daughter2() << std::endl;
+      // std::cout << "PDGID for first daughter is: " << event[idxDaugther1].id() << std::endl;
+      // std::cout << "PDGID for last daughter is:: " << event[idxDaugther2].id() << std::endl;
 
-      if ( event[idxDaugther1].idAbs() == 15) tau_index.push_back(idxDaugther1); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
-      if ( event[idxDaugther2].idAbs() == 15) tau_index.push_back(idxDaugther2); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
-    
+      if ( event[idxDaugther1].id() == 15)
+      {
+        tau_index.push_back(idxDaugther1); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
+        // std::cout << "Daughter 1 is a tau" << std::endl;
+      } 
+      
+      else if (event[idxDaugther1].id() == -15)
+      {
+        antitau_index.push_back(idxDaugther1);
+        // std::cout << "Daughter 1 is an antitau" << std::endl;
+      } 
+      
+      if ( event[idxDaugther2].id() == 15)
+      {
+        tau_index.push_back(idxDaugther2); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
+        // std::cout << "Daughter 2 is a tau" << std::endl;
+      } 
+      
+      else if (event[idxDaugther2].id() == -15)
+      {
+        antitau_index.push_back(idxDaugther2);
+        // std::cout << "Daughter 2 is an antitau" << std::endl;
+      } 
+
+      // if (event[idxDaugther1].idAbs() == 15 || event[idxDaugther2].idAbs() == 15){
+      //   vb_children_index_list = event[idxVb].daughterList();
+      //   for (int i; i < vb_children_index_list.size(); i++){
+      //     int temp = vb_children_index_list[i];
+      //     if (event[temp].idAbs() != 15){
+      //       std::cout << "pdgid of boson child: " << event[temp].idAbs() << std::endl;
+      //     }
+      //   }
+      // }
+      
     }
 
-  // Find tau children 1st generation
-  for (int tau_i=0; tau_i < tau_index.size(); tau_i++) //once have all daughters (which are all taus for us), loop through indices and pull children
-    {
-      if ( event[tau_index[tau_i]].id() == 15) tau_children_index = event[tau_index[tau_i]].daughterList(); //for each index in tau_index, check if antitau or tau and store accordingly
-      if ( event[tau_index[tau_i]].id() == -15) antitau_children_index = event[tau_index[tau_i]].daughterList();
-    }
+  // Find tau and antitau children 1st generation
+
+  tau_children_index = event[tau_index[0]].daughterList();
+  for (int i=0; i < tau_children_index.size(); i++)
+  {
+    // std::cout << tau_children_index[i] << std::endl;
+  }
+
+  antitau_children_index = event[antitau_index[0]].daughterList();
+  for (int i=0; i < antitau_children_index.size(); i++)
+  {
+    // std::cout << antitau_children_index[i] << std::endl;
+  }
+
+  // for (int tau_i=0; tau_i < tau_index.size(); tau_i++) //once have all daughters (which are all taus for us), loop through indices and pull children
+  //   {
+  //     if ( event[tau_index[tau_i]].id() == 15) tau_children_index = event[tau_index[tau_i]].daughterList(); //for each index in tau_index, check if antitau or tau and store accordingly
+  //     if ( event[tau_index[tau_i]].id() == -15) antitau_children_index = event[tau_index[tau_i]].daughterList();
+  //   }
   
   // std::cout<<"tau_children_index_size: "<<tau_children_index.size()<<std::endl;
   // std::cout<<"antitau_children_index_size: "<<antitau_children_index.size()<<std::endl;
@@ -2071,32 +2119,40 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   // ........................................................................
 
   std::vector<int> TauStableDaughterList;
+  std::vector<int> AntiTauStableDaughterList;
 
-  std::vector<int> taugen1;
+  // std::vector<int> taugen1;
   std::vector<int> taugen2;
   std::vector<int> taugen3;
   std::vector<int> taugen4;
   std::vector<int> taugen5;
-  std::vector<int> taugen6;
-  std::vector<int> taugen7;
+  // std::vector<int> taugen5;
+  // std::vector<int> taugen6;
+  // std::vector<int> taugen7;
 
-  // set taugen1 as the daughters of the tau and check if stable
+  // std::vector<int> antitaugen1;
+  std::vector<int> antitaugen2;
+  std::vector<int> antitaugen3;
+  std::vector<int> antitaugen4;
+  std::vector<int> antitaugen5;
+
+  // Check stability of TAU
 
   if (tau_children_index.size() != 0){
 
-    std::cout << "--------------- NEW EVENT -----------------" << std::endl;
+    // std::cout << "--------------- NEW EVENT -----------------" << std::endl;
 
     for (int i_taugen1 = 0; i_taugen1 < tau_children_index.size(); i_taugen1++){                 
-      std::cout << "Checking child: " << tau_children_index[i_taugen1] << std::endl;
+      // std::cout << "Checking child: " << tau_children_index[i_taugen1] << std::endl;
       if (event[tau_children_index[i_taugen1]].isFinal() == 1){ 
-        std::cout << "This child is stable" << std::endl;                             
+        // std::cout << "This child is stable" << std::endl;                             
         TauStableDaughterList.push_back(tau_children_index[i_taugen1]);                                  
       }   
       else {   
-        std::cout << "This child is NOT stable" << std::endl;                         
-        std::cout << "These are its children: " << std::endl;
+        // std::cout << "This child is NOT stable" << std::endl;                         
+        // std::cout << "These are its children: " << std::endl;
         for (int i_daught = 0; i_daught < (event[tau_children_index[i_taugen1]].daughterList()).size(); i_daught++){
-          std::cout << (event[tau_children_index[i_taugen1]].daughterList())[i_daught] << std::endl;
+          // std::cout << (event[tau_children_index[i_taugen1]].daughterList())[i_daught] << std::endl;
           taugen2.push_back((event[tau_children_index[i_taugen1]].daughterList())[i_daught]);                   
         }
       }
@@ -2104,53 +2160,212 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
       // Check if particles in 2nd gen are stable, and move to next generation
 
     if (taugen2.size() != 0){
-      std::cout << "Checking 2nd gen particles..." << std::endl;
+      // std::cout << "Checking 2nd gen particles..." << std::endl;
       for (int i_taugen2 = 0; i_taugen2 < taugen2.size(); i_taugen2++){                 
-        std::cout << "Checking child: " << taugen2[i_taugen2] << std::endl;
+        // std::cout << "Checking child: " << taugen2[i_taugen2] << std::endl;
         if (event[taugen2[i_taugen2]].isFinal() == 1){ 
-          std::cout << "This child is stable" << std::endl;                             
+          // std::cout << "This child is stable" << std::endl;                             
           TauStableDaughterList.push_back(taugen2[i_taugen2]);                                  
         }   
         else {   
-          std::cout << "This child is NOT stable" << std::endl;                         
-          std::cout << "These are its children: " << std::endl;
+          // std::cout << "This child is NOT stable" << std::endl;                         
+          // std::cout << "These are its children: " << std::endl;
           for (int i_daught = 0; i_daught < (event[taugen2[i_taugen2]].daughterList()).size(); i_daught++){
-            std::cout << (event[taugen2[i_taugen2]].daughterList())[i_daught] << std::endl;
+            // std::cout << (event[taugen2[i_taugen2]].daughterList())[i_daught] << std::endl;
             taugen3.push_back((event[taugen2[i_taugen2]].daughterList())[i_daught]);                   
           }
         }
       }
-    }
-  }
+
+      if (taugen3.size() != 0){
+      // std::cout << "Checking 3rd gen particles..." << std::endl;
+        for (int i_taugen3 = 0; i_taugen3 < taugen3.size(); i_taugen3++){                 
+          // std::cout << "Checking child: " << taugen3[i_taugen3] << std::endl;
+          if (event[taugen3[i_taugen3]].isFinal() == 1){ 
+            // std::cout << "This child is stable" << std::endl;                             
+            TauStableDaughterList.push_back(taugen3[i_taugen3]);                                  
+          }   
+          else {   
+            // std::cout << "This child is NOT stable" << std::endl;                         
+            // std::cout << "These are its children: " << std::endl;
+            for (int i_daught = 0; i_daught < (event[taugen3[i_taugen3]].daughterList()).size(); i_daught++){
+              // std::cout << (event[taugen3[i_taugen3]].daughterList())[i_daught] << std::endl;
+              taugen4.push_back((event[taugen3[i_taugen3]].daughterList())[i_daught]);                   
+            }
+          }
+        }
+        if (taugen4.size() != 0){
+          // std::cout << "Checking 4th gen particles..." << std::endl;
+          for (int i_taugen4 = 0; i_taugen4 < taugen4.size(); i_taugen4++){                 
+            // std::cout << "Checking child: " << taugen4[i_taugen4] << std::endl;
+            if (event[taugen4[i_taugen4]].isFinal() == 1){ 
+              // std::cout << "This child is stable" << std::endl;                             
+              TauStableDaughterList.push_back(taugen4[i_taugen4]);                                  
+            }   
+            else {   
+              // std::cout << "This child is NOT stable" << std::endl;                         
+              // std::cout << "These are its children: " << std::endl;
+              for (int i_daught = 0; i_daught < (event[taugen4[i_taugen4]].daughterList()).size(); i_daught++){
+                // std::cout << (event[taugen4[i_taugen4]].daughterList())[i_daught] << std::endl;
+                taugen5.push_back((event[taugen3[i_taugen4]].daughterList())[i_daught]);                   
+              }
+            }
+          } 
+        } // end of gen4
+      } // end of gen3
+    } // end of gen2
+  } // end of gen1
   
   if (TauStableDaughterList.size() !=0){
-  std::cout << "Stable Daughters are: " << std::endl;
+  // std::cout << "Stable Daughters are: " << std::endl;
     for (int j = 0; j < TauStableDaughterList.size(); j++){
-    std::cout << TauStableDaughterList[j] << std::endl;
+    // std::cout << TauStableDaughterList[j] << std::endl;
     }
   }
 
-  if (taugen2.size() !=0){
-  std::cout << "2nd Generation Daughters are: " << std::endl;
-    for (int k = 0; k < taugen2.size(); k++){
-    std::cout << taugen2[k] << std::endl;
-    }
-  }
-
-  if (taugen3.size() !=0){
-  std::cout << "3rd Generation Daughters are: " << std::endl;
-    for (int m = 0; m < taugen3.size(); m++){
-    std::cout << taugen3[m] << std::endl;
-    }
-  }
-
-  // Check taugen2 for stable particles
-
-  // for (int child_i=0; child_i < tau_children_index.size(); child_i++)
-  // {
-  //   std::cout << "Checking if child of tau is final" << std::endl;
-  //   std::cout << "Is this child of tau final (1 is yes, 0 is no)?" << event[tau_children_index[child_i]].isFinal() << std::endl;
+  // if (taugen2.size() !=0){
+  // std::cout << "2nd Generation Daughters are: " << std::endl;
+  //   for (int k = 0; k < taugen2.size(); k++){
+  //   std::cout << taugen2[k] << std::endl;
+  //   }
   // }
+
+  // if (taugen3.size() !=0){
+  // std::cout << "3rd Generation Daughters are: " << std::endl;
+  //   for (int m = 0; m < taugen3.size(); m++){
+  //   std::cout << taugen3[m] << std::endl;
+  //   }
+  // }
+
+  // if (taugen4.size() !=0){
+  // std::cout << "4th Generation Daughters are: " << std::endl;
+  //   for (int m = 0; m < taugen4.size(); m++){
+  //   std::cout << taugen4[m] << std::endl;
+  //   }
+  // }
+
+  // if (taugen5.size() !=0){
+  // std::cout << "5th Generation Daughters are: " << std::endl;
+  //   for (int m = 0; m < taugen5.size(); m++){
+  //   std::cout << taugen5[m] << std::endl;
+  //   }
+  // }
+
+
+  // Check stability of ANTITAU
+
+  if (antitau_children_index.size() != 0){
+
+    // std::cout << "--------------- NEW EVENT: Checking antitau  -----------------" << std::endl;
+
+    for (int i_taugen1 = 0; i_taugen1 < antitau_children_index.size(); i_taugen1++){                 
+      // std::cout << "Checking child: " << antitau_children_index[i_taugen1] << std::endl;
+      if (event[antitau_children_index[i_taugen1]].isFinal() == 1){ 
+        // std::cout << "This child is stable" << std::endl;                             
+        AntiTauStableDaughterList.push_back(antitau_children_index[i_taugen1]);                                  
+      }   
+      else {   
+        // std::cout << "This child is NOT stable" << std::endl;                         
+        // std::cout << "These are its children: " << std::endl;
+        for (int i_daught = 0; i_daught < (event[antitau_children_index[i_taugen1]].daughterList()).size(); i_daught++){
+          // std::cout << (event[antitau_children_index[i_taugen1]].daughterList())[i_daught] << std::endl;
+          antitaugen2.push_back((event[antitau_children_index[i_taugen1]].daughterList())[i_daught]);                   
+        }
+      }
+    }
+      // Check if particles in 2nd gen are stable, and move to next generation
+
+    if (antitaugen2.size() != 0){
+      // std::cout << "Checking 2nd gen particles..." << std::endl;
+      for (int i_taugen2 = 0; i_taugen2 < antitaugen2.size(); i_taugen2++){                 
+        // std::cout << "Checking child: " << antitaugen2[i_taugen2] << std::endl;
+        if (event[antitaugen2[i_taugen2]].isFinal() == 1){ 
+          // std::cout << "This child is stable" << std::endl;                             
+          AntiTauStableDaughterList.push_back(antitaugen2[i_taugen2]);                                  
+        }   
+        else {   
+          // std::cout << "This child is NOT stable" << std::endl;                         
+          // std::cout << "These are its children: " << std::endl;
+          for (int i_daught = 0; i_daught < (event[antitaugen2[i_taugen2]].daughterList()).size(); i_daught++){
+            // std::cout << (event[antitaugen2[i_taugen2]].daughterList())[i_daught] << std::endl;
+            antitaugen3.push_back((event[antitaugen2[i_taugen2]].daughterList())[i_daught]);                   
+          }
+        }
+      }
+      if (antitaugen3.size() != 0){
+        // std::cout << "Checking 3rd gen particles..." << std::endl;
+        for (int i_taugen3 = 0; i_taugen3 < antitaugen3.size(); i_taugen3++){                 
+          // std::cout << "Checking child: " << antitaugen3[i_taugen3] << std::endl;
+          if (event[antitaugen3[i_taugen3]].isFinal() == 1){ 
+            // std::cout << "This child is stable" << std::endl;                             
+            AntiTauStableDaughterList.push_back(antitaugen3[i_taugen3]);                                  
+          }   
+          else {   
+            // std::cout << "This child is NOT stable" << std::endl;                         
+            // std::cout << "These are its children: " << std::endl;
+            for (int i_daught = 0; i_daught < (event[antitaugen3[i_taugen3]].daughterList()).size(); i_daught++){
+              // std::cout << (event[antitaugen3[i_taugen3]].daughterList())[i_daught] << std::endl;
+              antitaugen4.push_back((event[antitaugen3[i_taugen3]].daughterList())[i_daught]);                   
+            }
+          }
+        }
+        if (antitaugen4.size() != 0){
+          // std::cout << "Checking 4th gen particles..." << std::endl;
+          for (int i_taugen4 = 0; i_taugen4 < antitaugen4.size(); i_taugen4++){                 
+            // std::cout << "Checking child: " << antitaugen4[i_taugen4] << std::endl;
+            if (event[antitaugen4[i_taugen4]].isFinal() == 1){ 
+              // std::cout << "This child is stable" << std::endl;                             
+              AntiTauStableDaughterList.push_back(antitaugen4[i_taugen4]);                                  
+            }   
+            else {   
+              // std::cout << "This child is NOT stable" << std::endl;                         
+              // std::cout << "These are its children: " << std::endl;
+              for (int i_daught = 0; i_daught < (event[antitaugen4[i_taugen4]].daughterList()).size(); i_daught++){
+                // std::cout << (event[antitaugen4[i_taugen4]].daughterList())[i_daught] << std::endl;
+                antitaugen5.push_back((event[antitaugen4[i_taugen4]].daughterList())[i_daught]);                   
+              }
+            }
+          }
+        } // end of gen4
+      } // end of gen3
+    } // end of gen2
+  } // end of gen1
+  
+  if (AntiTauStableDaughterList.size() !=0){
+    // std::cout << "Stable Daughters are: " << std::endl;
+    for (int j = 0; j < AntiTauStableDaughterList.size(); j++){
+    // std::cout << AntiTauStableDaughterList[j] << std::endl;
+    }
+  }
+
+  // if (antitaugen2.size() !=0){
+  // std::cout << "2nd Generation Daughters are: " << std::endl;
+  //   for (int k = 0; k < antitaugen2.size(); k++){
+  //   std::cout << antitaugen2[k] << std::endl;
+  //   }
+  // }
+
+  // if (antitaugen3.size() !=0){
+  // std::cout << "3rd Generation Daughters are: " << std::endl;
+  //   for (int m = 0; m < antitaugen3.size(); m++){
+  //   std::cout << antitaugen3[m] << std::endl;
+  //   }
+  // }
+
+  // if (antitaugen4.size() !=0){
+  // std::cout << "4th Generation Daughters are: " << std::endl;
+  //   for (int m = 0; m < antitaugen4.size(); m++){
+  //   std::cout << antitaugen4[m] << std::endl;
+  //   }
+  // }
+
+  // if (antitaugen5.size() !=0){
+  // std::cout << "5th Generation Daughters are: " << std::endl;
+  //   for (int m = 0; m < antitaugen5.size(); m++){
+  //   std::cout << antitaugen5[m] << std::endl;
+  //   }
+  // }
+
   // Fill truth particle object and store in the collection for each Born tau
   // -----------------------------------------------------------------------------------
 
@@ -2158,9 +2373,10 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
 
   if (tau_index.size() != 0)
     {
+      // std::cout << "size of tau index: " << antitau_index.size() << std::endl;
       for (int i_tau = 0; i_tau < tau_index.size(); i_tau++)
         {
-
+          // std::cout << "current index: " << i_tau << std::endl;
           TruthPart temp_tau;
           TruthPart* p_temp_tau;
 
@@ -2172,38 +2388,71 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
           // ..................................................
 
           p_Tau_Coll->push_back(temp_tau); //has pdgid 
+          // std::cout << "Pushed to p_Tau_Coll" << std::endl;
 
         }
     }
+
+  if (antitau_index.size() != 0)
+    {
+      // std::cout << "size of antitau index: " << antitau_index.size() << std::endl;
+      for (int i_tau = 0; i_tau < antitau_index.size(); i_tau++)
+        {
+
+          // std::cout << "current index: " << i_tau << std::endl;
+
+          TruthPart temp_antitau;
+          TruthPart* p_temp_antitau;
+
+          // std::cout << "test1" << std::endl;
+
+          p_temp_antitau = &temp_antitau;
+
+          // std::cout << "test2" << std::endl;
+
+          Fill_TruthPart(event, antitau_index[i_tau], p_temp_antitau);
+
+          // std::cout << "test3" << std::endl;
+
+          // Store the 4 vector in the born tau collection
+          // ..................................................
+
+          p_AntiTau_Coll->push_back(temp_antitau); //has pdgid 
+          // std::cout << "Pushed to p_AntiTau_Coll" << std::endl;
+
+        }
+    }
+
 
   //CHECK AND DEBUG
   // Fill truth particle object and store in the collection for children of tau (separately for tau and antitau)
   // -----------------------------------------------------------------------------------
 
-     if (tau_children_index.size() != 0) // don't need because if 0, for loop runs 0-->0 and won't execute
+     if (TauStableDaughterList.size() != 0) // don't need because if 0, for loop runs 0-->0 and won't execute
     {
-      for (int i_child = 0; i_child < tau_children_index.size(); i_child++)
+      for (int i_child = 0; i_child < TauStableDaughterList.size(); i_child++)
         {
 
           TruthPart temp_tau_child;
           TruthPart* p_temp_tau_child;
 
           p_temp_tau_child = &temp_tau_child;
-          Fill_TruthPart(event, tau_children_index[i_child], p_temp_tau_child);
+          Fill_TruthPart(event, TauStableDaughterList[i_child], p_temp_tau_child);
 
           // Store the 4 vector in the born tau decay products collection
           // ..................................................
 
           p_TauDecay_Coll->push_back(temp_tau_child); //has pdgid 
+          // std::cout << "Pushed to p_TauDecay_Coll" << std::endl;
 
         }
     }
 
     //antitau
 
-    if (antitau_children_index.size() != 0)
+    if (AntiTauStableDaughterList.size() != 0)
     {
-      for (int i_child = 0; i_child < antitau_children_index.size(); i_child++)
+      for (int i_child = 0; i_child < AntiTauStableDaughterList.size(); i_child++)
         {
 
           TruthPart temp_antitau_child;
@@ -2211,12 +2460,13 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
 
           p_temp_antitau_child = &temp_antitau_child;
 
-          Fill_TruthPart(event, antitau_children_index[i_child], p_temp_antitau_child);
+          Fill_TruthPart(event, AntiTauStableDaughterList[i_child], p_temp_antitau_child);
 
           // Store the 4 vector in the born antitau decay products collection
           // ..................................................
 
           p_AntiTauDecay_Coll->push_back(temp_antitau_child); //has pdgid 
+          // std::cout << "Pushed to p_AntiTauDecay_Coll" << std::endl;
 
         }
     }

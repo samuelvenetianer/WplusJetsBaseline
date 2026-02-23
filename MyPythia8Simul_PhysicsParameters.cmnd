@@ -98,9 +98,9 @@ Tune:preferLHAPDF = 2                             ! Use LHAPDF 6 PDF
 !    d) Switch on/off the key QCD effects (default: all on):
 !       ---------------------------------- 
 
-#PartonLevel:MPI = off                            ! no multiparton interactions
-#PartonLevel:ISR = off                            ! no initial-state radiation
-#PartonLevel:FSR = off                            ! no final-state radiation
+PartonLevel:MPI = off                            ! no multiparton interactions
+PartonLevel:ISR = off                            ! no initial-state radiation
+PartonLevel:FSR = off                            ! no final-state radiation
 #HadronLevel:Hadronize = off                      ! no hadronization
 #HadronLevel:Decay = off                          ! no decays
 
@@ -114,6 +114,11 @@ Tune:preferLHAPDF = 2                             ! Use LHAPDF 6 PDF
 #TimeShower:pTmin = 0.50                          ! Cutoff for QCD radiation:   monash = 0.50
 #TimeShower:pTminChgQ = 0.50                      ! Cutoff for QED radiation:   monash = 0.50
 #TimeShower:phiPolAsym = on                       ! Asymmetric azimuth:         monash = on
+TimeShower:QEDshowerByL = off ! no QED FSR from leptons 
+TimeShower:QEDshowerByQ = off ! no QED FSR from quarks 
+TimeShower:QEDshowerByGamma = off   ! no photon splittings γ → ff̄
+TimeShower:QEDshowerByOther = off
+#TimeShower:QEDshowerByW = off
 
 
 !    f) Space shower (QCD ISR interleaved with MPI):
@@ -136,6 +141,8 @@ Tune:preferLHAPDF = 2                             ! Use LHAPDF 6 PDF
 #BeamRemnants:halfMassForKT = 1.0                 ! Primordial kT soft/hard mass boundary:     monash = 1.0
 
 #SpaceShower:rapidityOrderMPI = on
+SpaceShower:QEDshowerByL = off ! no QED ISR from leptons 
+SpaceShower:QEDshowerByQ = off ! no QED ISR from quarks
 
 
 !    g) Hadronization:
