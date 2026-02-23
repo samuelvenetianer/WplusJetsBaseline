@@ -88,4 +88,4 @@ Examples are included.<br />
 `MyPythia8Simul_RunParameters.cmnd`:<br />
 1. Specify number of events<br />
 
-Don't forget to run "make" in terminal after making changes!<br />
+**Don't forget to run "make" in terminal after making changes!<br />**
