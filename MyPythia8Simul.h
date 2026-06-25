@@ -262,7 +262,7 @@ class MyAnalysis {
   std::vector<int> jet_born_nPart;
   std::vector<int> bjet_bare_nPart;
   std::vector<int> boson_ID;
-  std::vector<int> vecboson_index;      //SHV 10/15/25
+  // std::vector<int> vecboson_index;      //SHV 10/15/25
 
   std::vector<float> top_pt, top_eta, top_phi, top_E;
   std::vector<float> neutrino_pt, neutrino_eta, neutrino_phi, neutrino_E;

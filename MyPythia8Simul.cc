@@ -146,7 +146,7 @@ void MyAnalysis::init()
   tree->Branch("electron_born_E",&electron_born_E);
   tree->Branch("electron_born_charge",&electron_born_charge);
 
-  tree->Branch("tau_born_pt",&tau_born_pt);   // SHV - includes tau and antitau
+  tree->Branch("tau_born_pt",&tau_born_pt);   // SHV - includes tau only
   tree->Branch("tau_born_eta",&tau_born_eta);
   tree->Branch("tau_born_phi",&tau_born_phi);
   tree->Branch("tau_born_E",&tau_born_E);
@@ -437,7 +437,7 @@ void MyAnalysis::init()
   tree->Branch("nPromptPhoton",&nPromptPhotons);
 
   // TAU DECAY MULTIPLICITY
-  tree->Branch("nTauBorn", &nTauBorn);              //SHV 10/15/25 - counts taus and antitaus together
+  tree->Branch("nTauBorn", &nTauBorn);              
   tree->Branch("nTauChargedPion", &nTauChargedPion);      //SHV 10/23/25 - counts pi plus and pi minus together
   tree->Branch("nTauNeutralPion", &nTauNeutralPion);      //SHV 11/12/25
   tree->Branch("nTauMuon", &nTauMuon);              //SHV 11/12/25
@@ -454,7 +454,7 @@ void MyAnalysis::init()
   tree->Branch("nTauKaon", &nTauKaon);
 
   // ANTITAU DECAY MULTIPLICITY
-  tree->Branch("nAntiTauBorn", &nAntiTauBorn);              //SHV 10/15/25 - counts taus and antitaus together
+  tree->Branch("nAntiTauBorn", &nAntiTauBorn);              
   tree->Branch("nAntiTauChargedPion", &nAntiTauChargedPion);      //SHV 10/23/25 - counts pi plus and pi minus together
   tree->Branch("nAntiTauNeutralPion", &nAntiTauNeutralPion);      //SHV 11/12/25
   tree->Branch("nAntiTauMuon", &nAntiTauMuon);              //SHV 11/12/25
@@ -1092,6 +1092,8 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
 
     // ADD FOR TAUS AND DECAY PRODUCTS
 
+    //test
+
     //Tau Born only, count taus and antitaus separately
     nTauBorn = 0;
     nAntiTauBorn = 0;
@@ -1100,7 +1102,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
 
     if (p_Tau_Coll->size() != 0)
       {
-        //std::cout<<"There are taus!"<<std::endl;
+        // std::cout<<"There are taus!"<<std::endl;
         for (size_t i = 0; i < p_Tau_Coll->size(); i++)
           {
             tau_born_pt.push_back((Tau_Coll[i]).Pt());
@@ -1116,7 +1118,8 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
 
     if (p_AntiTau_Coll->size() != 0)
       {
-        //std::cout<<"There are antitaus!"<<std::endl;
+        // std::cout<<"There are antitaus!"<<std::endl;
+        // test
         for (size_t i = 0; i < p_AntiTau_Coll->size(); i++)
           {
             antitau_born_pt.push_back((AntiTau_Coll[i]).Pt());
@@ -1163,7 +1166,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
     nAntiTauKaonS = 0;
     nAntiTauKaon = 0;
 
-    //std::cout<<"p_TauDecay_Coll size: "<<p_TauDecay_Coll->size()<<std::endl;
+    // std::cout<<"p_TauDecay_Coll size: "<<p_TauDecay_Coll->size()<<std::endl;
 
     if (p_TauDecay_Coll->size() != 0)
       {
@@ -1192,6 +1195,7 @@ void MyAnalysis::analyze(Event& event, Event& partonevent, std::vector<double> E
             //neutral pions
             else if ((TauDecay_Coll[i]).Pdgid() == 111)
               {
+                std::cout << "Neutral pion from tau!" << std::endl;
                 tau_neutral_pion_pt.push_back((TauDecay_Coll[i]).Pt());
                 tau_neutral_pion_eta.push_back((TauDecay_Coll[i]).Eta());
                 double i_phi = (TauDecay_Coll[i]).Phi();
