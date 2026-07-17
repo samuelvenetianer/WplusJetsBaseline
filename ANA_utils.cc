@@ -1339,11 +1339,19 @@ void ANA_utils::Get_VectorBosons(Pythia8::Event event, std::vector<TruthPart>* p
   // ----------------------
 
   std::vector<int> vecboson_index;
+
+  // std::cout << "finding vector bosons" << std::endl;
+  // std::cout << "event size: " << event.size() << std::endl;
   
   for (int i = event.size() - 1; i > 0; i--) {
     if (event[i].idAbs() == 24 || event[i].idAbs() == 23) {
-      //std::cout<<"ID of vector boson saved is: "<<event[i].idAbs()<<std::endl;
-      if (event[i].iBotCopyId()==i) vecboson_index.push_back(i);
+      // std::cout << i << std::endl;
+      // std::cout<<"ID of vector boson saved is: "<<event[i].idAbs()<<std::endl;
+      // std::cout << "iBotCopyID: " << event[i].iBotCopyId() << std::endl;
+      if (event[i].iBotCopyId()==i){
+        vecboson_index.push_back(i);
+        // std::cout << "pushed this vecboson back!" << std::endl;
+      } 
     }
   }
 
@@ -1526,6 +1534,7 @@ void ANA_utils::Bare_WelectronTruePart(Pythia8::Event event, std::vector<TruthPa
   // Find the W or Z bosons
   // ----------------------
 
+
   std::vector<int> vecboson_index;
   
   for (int i = event.size() - 1; i > 0; i--) {
@@ -1629,6 +1638,8 @@ void ANA_utils::Get_BarePromptLepton(Pythia8::Event event, std::vector<int> vecb
     // ........................................................................
     
     std::vector<int> StableDaughterList;
+
+    //test
 
     std::vector<int> gen1;
     std::vector<int> gen2;
@@ -2008,7 +2019,7 @@ void ANA_utils::Get_BornPromptLepton(Pythia8::Event event, std::vector<int> vecb
 }
 // ============================================================================================================
 
-void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_index, std::vector<TruthPart>* p_Tau_Coll, std::vector<TruthPart>* p_AntiTau_Coll, std::vector<TruthPart>* p_TauDecay_Coll, std::vector<TruthPart>* p_AntiTauDecay_Coll) {
+void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_index, std::vector<TruthPart>* p_Tau_Coll, std::vector<TruthPart>* p_AntiTau_Coll, std::vector<TruthPart>* p_TauDecay_Coll, std::vector<TruthPart>* p_AntiTauDecay_Coll, std::vector<TruthPart>* p_Corr_Plus, std::vector<TruthPart>* p_Corr_Minus) {
 
 //MODEL AFTER THIS, CHANGE IDs TO BE TAUS, SAVE TAU INFO
 //UPDATE COMMENTS
@@ -2029,14 +2040,25 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
   std::vector<int> tau_children_index; //storing children for tau
   std::vector<int> antitau_children_index; //storing children for antitau
   std::vector<int> vb_children_index_list;
+  std::vector<int> bos_match_status;
+  std::vector<int> zplus_proton_corr_idx;
+  std::vector<int> zminus_proton_corr_idx;
+
+  float beamplus_px_bump = 0;
+  float beamplus_py_bump = 0;
+  float beamplus_pz_bump = 0;
+  float beamminus_px_bump = 0;
+  float beamminus_py_bump = 0;
+  float beamminus_pz_bump = 0;
 
   // Loop over all vector bosons found in the event
   // ..............................................
   // Note: This require using the function Get_VectorBosons, and passing the index of each vector boson as
   //       input to this function
-
+  // std::cout << "Number of vector bosons in this event: "<< vecboson_index.size() << std::endl;
   for (int i=0; i< vecboson_index.size(); i++) //loop over all vector bosons found in the event (stored in vecboson_index)
     {
+      // std::cout << "Checking vector boson index: " << i << std::endl;
       int idxVb = vecboson_index[i]; //assign the "ith" vector boson to idxVb
       
       // std::cout << "index for this vector boson is: " << idxVb << std::endl;
@@ -2053,55 +2075,100 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
       // std::cout << "PDGID for first daughter is: " << event[idxDaugther1].id() << std::endl;
       // std::cout << "PDGID for last daughter is:: " << event[idxDaugther2].id() << std::endl;
 
-      if ( event[idxDaugther1].id() == 15)
+      if (event[idxDaugther1].id() == 15)
       {
         tau_index.push_back(idxDaugther1); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
         // std::cout << "Daughter 1 is a tau" << std::endl;
+        // Grab status code of boson
+        int bos_stat = event[idxVb].status();
+        // std::cout << "Status code for boson is: " << bos_stat << std::endl;
+        for (int i=0; i < event.size(); i++) {
+          if ((event[i].status() == bos_stat) && (event[i].id() != 23)){
+            bos_match_status.push_back(i);
+            // std::cout << "Particle at index: " << i << " has status code: " << event[i].status() << std::endl;
+            if (event[i].isAncestor(1) == 1){
+              // std::cout << "Origin is z+ proton" << std::endl;
+              zplus_proton_corr_idx.push_back(i);
+            }
+            else if (event[i].isAncestor(2) == 1){
+              // std::cout << "Origin is z- proton" << std::endl;
+              zminus_proton_corr_idx.push_back(i);
+            }
+          }
+        }
       } 
       
-      else if (event[idxDaugther1].id() == -15)
+      if (event[idxDaugther1].id() == -15)
       {
         antitau_index.push_back(idxDaugther1);
         // std::cout << "Daughter 1 is an antitau" << std::endl;
+        // Grab status code of boson
+        int bos_stat = event[idxVb].status();
+        // std::cout << "Status code for boson is: " << bos_stat << std::endl;
+        for (int i=0; i < event.size(); i++) {
+          if ((event[i].status() == bos_stat) && (event[i].id() != 23)){
+            bos_match_status.push_back(i);
+            // std::cout << "Particle at index: " << i << " has status code: " << event[i].status() << std::endl;
+            if (event[i].isAncestor(1) == 1){
+              // std::cout << "Origin is z+ proton" << std::endl;
+              zplus_proton_corr_idx.push_back(i);
+            }
+            else if (event[i].isAncestor(2) == 1){
+              // std::cout << "Origin is z- proton" << std::endl;
+              zminus_proton_corr_idx.push_back(i);
+            }
+          }
+        }
       } 
       
       if ( event[idxDaugther2].id() == 15)
       {
         tau_index.push_back(idxDaugther2); //save to tau_index only the indices of daughters who are taus, creatig a vector of indices
         // std::cout << "Daughter 2 is a tau" << std::endl;
+        // Grab status code of boson
+        // int bos_stat = event[idxVb].status();
+        // std::cout << "Status code for boson is: " << bos_stat << std::endl;
+        // int ancestor_id = event[idxDaugther2].isAncestor(idxDaugther2);
+        // std::cout << "Ancestor of this tau is: " << ancestor_id << std::endl;
       } 
       
-      else if (event[idxDaugther2].id() == -15)
+      if (event[idxDaugther2].id() == -15)
       {
         antitau_index.push_back(idxDaugther2);
         // std::cout << "Daughter 2 is an antitau" << std::endl;
+        // Grab status code of boson
+        // int bos_stat = event[idxVb].status();
+        // std::cout << "Status code for boson is: " << bos_stat << std::endl;
       } 
 
-      // if (event[idxDaugther1].idAbs() == 15 || event[idxDaugther2].idAbs() == 15){
-      //   vb_children_index_list = event[idxVb].daughterList();
-      //   for (int i; i < vb_children_index_list.size(); i++){
-      //     int temp = vb_children_index_list[i];
-      //     if (event[temp].idAbs() != 15){
-      //       std::cout << "pdgid of boson child: " << event[temp].idAbs() << std::endl;
-      //     }
-      //   }
-      // }
+      else{
+        std::cout << "No decay prods were taus!" << std::endl;
+      }
       
     }
-
+    
   // Find tau and antitau children 1st generation
 
-  tau_children_index = event[tau_index[0]].daughterList();
-  for (int i=0; i < tau_children_index.size(); i++)
-  {
-    // std::cout << tau_children_index[i] << std::endl;
-  }
+  // std::cout << "size of tau_index: " << tau_index.size() << std::endl;
+  // std::cout << "tau_index[0]: " << tau_index[0] << std::endl;
+  // std::cout << "event[tau_index[0]]" << event[tau_index[0]] << std::endl;
 
+  tau_children_index = event[tau_index[0]].daughterList();
+  // std::cout << "size of tau_children_index: " << tau_children_index.size() << std::endl;
+  // for (int i=0; i < tau_children_index.size(); i++)
+  // {
+  //   std::cout << "ID of tau child: " << event[tau_children_index[i]].id() << std::endl;
+  // }
+
+  // std::cout << "size of antitau_index: " << antitau_index.size() << std::endl;
+  // std::cout << "antitau_index[0]: " << antitau_index[0] << std::endl;
+  // std::cout << "event[antitau_index[0]]" << event[antitau_index[0]] << std::endl;
+  
   antitau_children_index = event[antitau_index[0]].daughterList();
-  for (int i=0; i < antitau_children_index.size(); i++)
-  {
-    // std::cout << antitau_children_index[i] << std::endl;
-  }
+  // for (int i=0; i < antitau_children_index.size(); i++)
+  // {
+  //   std::cout << "ID of antitau child: " << event[antitau_children_index[i]].id() << std::endl;
+  // }
 
   // for (int tau_i=0; tau_i < tau_index.size(); tau_i++) //once have all daughters (which are all taus for us), loop through indices and pull children
   //   {
@@ -2144,6 +2211,8 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
 
     for (int i_taugen1 = 0; i_taugen1 < tau_children_index.size(); i_taugen1++){                 
       // std::cout << "Checking child: " << tau_children_index[i_taugen1] << std::endl;
+      int idx_temp = tau_children_index[i_taugen1];
+      // std::cout << "Checking child: " << event[idx_temp].id() << std::endl;
       if (event[tau_children_index[i_taugen1]].isFinal() == 1){ 
         // std::cout << "This child is stable" << std::endl;                             
         TauStableDaughterList.push_back(tau_children_index[i_taugen1]);                                  
@@ -2471,6 +2540,45 @@ void ANA_utils::Get_Tau_Info(Pythia8::Event event, std::vector<int> vecboson_ind
         }
     }
 
+    if (zplus_proton_corr_idx.size() !=0){
+      // std::cout << "THERE IS A PLUS CORRECTION" << std::endl;
+      for (int i = 0; i < zplus_proton_corr_idx.size(); i++){
+        // std::cout << "index of q/g for plus: " << zplus_proton_corr_idx[i] << std::endl;
+
+        TruthPart temp_corr_plus;
+        TruthPart* p_temp_corr_plus;
+
+        p_temp_corr_plus = &temp_corr_plus;
+
+        Fill_TruthPart(event, zplus_proton_corr_idx[i], p_temp_corr_plus);
+
+        // Store the 4 vector in the born antitau decay products collection
+        // ..................................................
+
+        p_Corr_Plus->push_back(temp_corr_plus); //has pdgid 
+        // std::cout << "Pushed to p_Corr_Plus" << std::endl;
+      }
+    }
+
+    if (zminus_proton_corr_idx.size() !=0){
+      // std::cout << "THERE IS A MINUS CORRECTION" << std::endl;
+      for (int i = 0; i < zminus_proton_corr_idx.size(); i++){
+        // std::cout << "index of q/g for minus: " << zminus_proton_corr_idx[i] << std::endl;
+
+        TruthPart temp_corr_minus;
+        TruthPart* p_temp_corr_minus;
+
+        p_temp_corr_minus = &temp_corr_minus;
+
+        Fill_TruthPart(event, zminus_proton_corr_idx[i], p_temp_corr_minus);
+
+        // Store the 4 vector in the born antitau decay products collection
+        // ..................................................
+
+        p_Corr_Minus->push_back(temp_corr_minus); //has pdgid 
+        // std::cout << "Pushed to p_Corr_Minus" << std::endl;
+      }
+    }
 }
 
 // ============================================================================================================
