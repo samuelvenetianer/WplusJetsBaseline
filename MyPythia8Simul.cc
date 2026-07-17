@@ -2371,7 +2371,7 @@ int main(int argc, char* argv[])
     // ...................
 
     std::string myOutName;
-    myOutName = "../WplusJetsAnalysis/pythia-outputs/2025/"+root_output+".root";
+    myOutName = "../../WplusJetsAnalysis/pythia-outputs/2025/"+root_output+".root";
 
     TFile *myfile = TFile::Open(myOutName.c_str(),"recreate");
 
