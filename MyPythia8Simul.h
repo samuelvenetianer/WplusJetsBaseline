@@ -169,6 +169,12 @@ class MyAnalysis {
   std::vector<TruthPart> AntiTauDecay_Coll;     //SHV 10/15/25 --> children of antitau vector
   std::vector<TruthPart>* p_AntiTauDecay_Coll;
 
+  std::vector<TruthPart> Corr_Plus;
+  std::vector<TruthPart>* p_Corr_Plus;
+
+  std::vector<TruthPart> Corr_Minus;
+  std::vector<TruthPart>* p_Corr_Minus;
+
   std::vector<TruthJets> TruthBareSmallRJets_Coll;
   std::vector<TruthJets>* p_TruthBareSmallRJets_Coll;
 
@@ -262,7 +268,7 @@ class MyAnalysis {
   std::vector<int> jet_born_nPart;
   std::vector<int> bjet_bare_nPart;
   std::vector<int> boson_ID;
-  std::vector<int> vecboson_index;      //SHV 10/15/25
+  // std::vector<int> vecboson_index;      //SHV 10/15/25
 
   std::vector<float> top_pt, top_eta, top_phi, top_E;
   std::vector<float> neutrino_pt, neutrino_eta, neutrino_phi, neutrino_E;
@@ -307,6 +313,10 @@ class MyAnalysis {
   std::vector<float> antitau_kaonL_pt, antitau_kaonL_eta, antitau_kaonL_phi, antitau_kaonL_E, antitau_kaonL_charge; //SHV 1/28/26
   std::vector<float> antitau_kaonS_pt, antitau_kaonS_eta, antitau_kaonS_phi, antitau_kaonS_E, antitau_kaonS_charge; //SHV 1/28/26
   std::vector<float> antitau_kaon_pt, antitau_kaon_eta, antitau_kaon_phi, antitau_kaon_E, antitau_kaon_charge; //SHV 1/28/26
+
+  // beam correction
+  std::vector<float> plus_bump_px, plus_bump_py, plus_bump_pz;
+  std::vector<float> minus_bump_px, minus_bump_py, minus_bump_pz;
 
   std::vector<float> lightjet_bare_pt, lightjet_bare_eta, lightjet_bare_phi, lightjet_bare_E;
   std::vector<float> jet_dress_pt, jet_dress_eta, jet_dress_phi, jet_dress_E;
