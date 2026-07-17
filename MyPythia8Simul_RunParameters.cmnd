@@ -13,7 +13,7 @@
 !    a) Job control parameters:
 !       .......................
 
-Main:numberOfEvents = 100          ! number of events to generate
+Main:numberOfEvents = 1000000       ! number of events to generate
 Main:timesAllowErrors = 500            ! how many aborts before run stops
 Random:setSeed = on                    ! off => Use default seed only once at the beginning; on => re-initialize on each Pythia::init call
 Random:seed = 781874711                ! used only if setSeed = on; use the time as a seed when set to 0
