@@ -99,8 +99,8 @@ Tune:preferLHAPDF = 2                             ! Use LHAPDF 6 PDF
 !       ---------------------------------- 
 
 PartonLevel:MPI = off                            ! no multiparton interactions
-PartonLevel:ISR = off                            ! no initial-state radiation
-PartonLevel:FSR = off                            ! no final-state radiation
+PartonLevel:ISR = on                            ! no initial-state radiation
+PartonLevel:FSR = off                          ! no final-state radiation
 #HadronLevel:Hadronize = off                      ! no hadronization
 #HadronLevel:Decay = off                          ! no decays
 
