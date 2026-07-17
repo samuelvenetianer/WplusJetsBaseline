@@ -23,10 +23,9 @@ Beams:eCM = 13000.                      ! CM energy of collision ! originally se
 !    ..............................................
 
 #HardQCD:all = on                       ! switch on all QCD jet + jet processes
-#PromptPhoton:all = on                  ! swich on gamma + jet and gamma + gamma
+#PromptPhoton:all = on                ! swich on gamma + jet and gamma + gamma
 #PromptPhoton:ffbar2gammagamma = on     ! q qbar -> gamma gamma
 #PromptPhoton:gg2ggamma = on            ! g g -> g gamma
-
 
 
 !    t-tbar production.
@@ -45,7 +44,7 @@ Beams:eCM = 13000.                      ! CM energy of collision ! originally se
 WeakSingleBoson:ffbar2gmZ = on          ! q qbar -> gamma*/Z0 inclusive --> uses combination of diagram 1 and 2 to generate events at full energy spectra
 #WeakBosonAndParton:qqbar2gmZg = on     ! q qbar -> gamma*/Z0 + g --> does a really good job with hard processes (high pT) - diagram 2
 #WeakBosonAndParton:qg2gmZq = on        ! q g -> gamma*/Z + q --> same as above - always turned on with #2
-WeakZ0:gmZmode = 2                     ! 0 = full gamma*/Z0 interference structue, 1 = pure gamma* contribution, 2 = pure Z0 contribution
+#WeakZ0:gmZmode = 2                     ! 0 = full gamma*/Z0 interference structue, 1 = pure gamma* contribution, 2 = pure Z0 contribution. Turning this off means full interference structure.
 
 
 
@@ -72,14 +71,17 @@ WeakZ0:gmZmode = 2                     ! 0 = full gamma*/Z0 interference structu
 ! 2) Tell that also long-lived should decay.
 !    ---------------------------------------
 
-#24:onMode   = off                       ! Switch off all W decays
-#24:onIfAny  = 11 12                     ! Switch on ev channel    ----> BSJ: 11/12 for e's, 13/14 for mu's!
-#24:onPosIfAny  = 11 12                 ! Switch on ev channel
-#24:onNegIfAny  = 1 2 3 4 5             ! Switch on ev channel
-23:onMode = off                           ! Switch on Z decays
-23:onIfAny = 15                     ! Added 15 to allow for tau decay
 
+24:onMode   = off                       ! Switch off all W decays
+23:onMode = off                         ! Switch off Z decays
+23:onIfAny = 15                         ! Turn on only Z decays to taus
 
+15:onMode = off 
+#TauDecays:mode = 3                      ! Force unpolarized, comment out when doing correlated decays
+#TauDecays:tauPolarization = 0           ! Force unpolarized, comment out when doing correlated decays
+15:onIfMatch = 211 16 111                ! Turn on only 1p1n-1p1n (for correlated decays)....
+
+#15:4:onMode = on                        ! Turn on taus/antitaus that decay via the 1p1n channel only (correlations on) - only this line needed
 
 ! 3) Generator-level kinematic cuts.
 !    -------------------------------
@@ -94,5 +96,5 @@ WeakZ0:gmZmode = 2                     ! 0 = full gamma*/Z0 interference structu
 !    Cut on the Jet pT
 !    .................
 
-PhaseSpace:pTHatMin = 20.               ! minimal pT scale in process (should be >20 GeV at the LHC)
+#PhaseSpace:pTHatMin = 20.               ! minimal pT scale in process (should be >20 GeV at the LHC)
 
